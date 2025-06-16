@@ -138,12 +138,12 @@ defaults = {
     'show_resume': False,
     'persona_content': "",
     'user_input': "",
+    'last_user_answer': None
 }
 for key, val in defaults.items():
     if key not in st.session_state:
         st.session_state[key] = val
 
-# --- Single question input process logic ---
 def process_user_question():
     user_question = st.session_state.user_input
     if user_question.strip():
@@ -167,9 +167,9 @@ def process_user_question():
             "time": time.time()
         })
         st.session_state.previous_conversation += f"\n{user_question}\n{response}"
+        st.session_state.last_user_answer = (user_question, response)
     st.session_state.user_input = ""
 
-# UI Elements
 persona_files = get_persona_files()
 
 if persona_files:
@@ -181,7 +181,6 @@ if persona_files:
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         st.session_state.questions = load_questions(relationship.split()[-1])
-        # Reset only these states on persona change
         st.session_state.response_matrix = []
         st.session_state.csv_filename = None
         st.session_state.bulk_running = False
@@ -191,6 +190,7 @@ if persona_files:
         st.session_state.show_resume = False
         st.session_state.previous_conversation = ""
         st.session_state.user_input = ""
+        st.session_state.last_user_answer = None
 
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
@@ -250,10 +250,13 @@ if persona_files:
 
         # Resume Logic
         if st.session_state.paused and st.session_state.show_resume:
+            st.info(f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.")
             if st.button("Resume Bulk Generation"):
                 st.session_state.paused = False
                 st.session_state.show_resume = False
                 st.rerun()
+        elif st.session_state.bulk_running:
+            st.info(f"{st.session_state.current_question_index} questions answered in bulk mode.")
 
         # Download Section
         if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
@@ -266,20 +269,11 @@ if persona_files:
                     key="download_csv"
                 )
 
-        # Conversation History
-        st.subheader("Conversation History")
-        # Combine bulk and user questions in order
-        combined_history = []
-        for idx, item in enumerate(st.session_state.response_matrix):
-            combined_history.append({"type": "bulk", "question": item[0], "answer": item[3], "time": item[5]})
-        for item in st.session_state.user_questions:
-            combined_history.append({"type": "user", "question": item["question"], "answer": item["answer"], "time": item["time"]})
-        combined_history.sort(key=lambda x: x["time"])
-        for item in combined_history:
-            st.markdown(f"**You**: {item['question']}")
-            st.markdown(f"**{st.session_state.botname}**: {item['answer']}")
-            st.caption(f"*Generated via {'bulk' if item['type'] == 'bulk' else 'interactive'} mode*")
-            st.divider()
+        # Only show latest user Q&A (not bulk) on page
+        if st.session_state.last_user_answer:
+            st.subheader("Latest Conversation")
+            st.markdown(f"**You**: {st.session_state.last_user_answer[0]}")
+            st.markdown(f"**{st.session_state.botname}**: {st.session_state.last_user_answer[1]}")
 
     else:
         if not st.session_state.questions:
