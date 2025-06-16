@@ -129,8 +129,8 @@ def load_questions(relationship_type):
         return []
     except Exception as e:
         st.error(f"Error reading questions: {str(e)}")
-        return []
-        
+        return [] 
+
 # --- Streamlit session state initialization ---
 if "user_info_loaded" not in st.session_state:
     st.session_state.username, st.session_state.user_gender = load_user_info()
@@ -220,9 +220,7 @@ if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filenam
         )
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    else:
-        st.error("No questions found for selected relationship type!")
-else:
+elif not persona_files:
     st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
 
 if st.session_state.response_matrix:
