@@ -323,7 +323,7 @@ if persona_files:
                     st.success(":green[Bulk generation resumed.]") 
                     
                 elif event["type"] == "bulk_completed": 
-                    st.success(event["message"])
+                    st.markdown(f":violet[{event['message']}]")
                     st.markdown("---")
         else:
             st.write("*No conversation history yet. Start by asking a question or beginning bulk generation.*")
