@@ -68,12 +68,12 @@ def extract_relationship_from_filename(filename):
     return base_name.replace('_', ' ')
 
 def extract_botname_from_content(content):
-    """Extract botname from persona content (look for 'Name: ' line)"""
+    """Extract botname from persona content (look for '- Name: ' line)"""
     lines = content.split('\n')
     for line in lines:
-        if line.strip().startswith('Name:'):
+        if line.strip().startswith('- Name: '):
             # Extract everything after "Name: "
-            name = line.strip().replace('Name:', '').strip()
+            name = line.strip().replace('- Name: ', '').strip()
             # Remove any additional info after comma
             if ',' in name:
                 name = name.split(',')[0].strip()
