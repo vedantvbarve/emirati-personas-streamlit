@@ -275,7 +275,10 @@ if persona_files:
                 csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
                 df.to_csv(csv_filename, index=False)
                 st.session_state.csv_filename = csv_filename
-                st.success("Bulk generation completed!")
+                st.markdown("Bulk generation completed!")
+                # st.markdown('<div style="background-color:#8e44ad;padding:12px;border-radius:8px;color:white;font-weight:bold;">Bulk generation completed!</div>',
+                #     unsafe_allow_html=True
+                # )
 
         # Resume Logic
         if st.session_state.paused and st.session_state.show_resume:
