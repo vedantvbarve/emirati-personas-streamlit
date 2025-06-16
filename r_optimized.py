@@ -276,7 +276,7 @@ if persona_files:
                 df.to_csv(csv_filename, index=False)
                 st.session_state.csv_filename = csv_filename
                 # st.success("Bulk generation completed!")
-                st.markdown('<div style="background-color:#8e44ad;padding:12px;border-radius:8px;color:white;font-weight:bold;">Bulk generation completed!</div>',
+                st.markdown(f'<div style="background-color:#8e44ad;padding:12px;border-radius:8px;color:white;font-weight:bold;">Bulk generation completed!</div>',
                     unsafe_allow_html=True
                 )
 
@@ -326,7 +326,10 @@ if persona_files:
                     st.success(":green[Bulk generation resumed.]") 
                     
                 elif event["type"] == "bulk_completed": 
-                    st.markdown(f":violet[{event['message']}]")
+                    st.markdown(
+                        f'<div style="background-color:#8e44ad;padding:12px;border-radius:8px;color:white;font-weight:bold;">{event["message"]}</div>',
+                        unsafe_allow_html=True
+                    )
                     st.markdown("---")
         else:
             st.write("*No conversation history yet. Start by asking a question or beginning bulk generation.*")
