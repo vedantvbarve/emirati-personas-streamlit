@@ -7,59 +7,43 @@ Original file is located at
     https://colab.research.google.com/drive/15bLkrgQW-nSRvDS5x_Xl04kduyMlfT8O
 """
 
-# !pip install llama-index-llms-google-genai
+# !pip install llama-index-llms-google-genai 
 
-from pydantic import BaseModel
+import streamlit as st
+from pydantic import BaseModel 
 import pprint
 import re
 import time
 import logging
 import json
-from llama_index.llms.google_genai import GoogleGenAI
-
 import pandas as pd
-import streamlit as st
+from llama_index.llms.google_genai import GoogleGenAI
+from google import genai
 
 # Initialize the Gemini LLM with a specific model and API key
 llm = GoogleGenAI(model= "gemini-2.5-pro-preview-03-25", #"gemini-2.0-flash",
-                        api_key= "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
-
-from google import genai
+                        api_key= "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o") 
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string):
     try:
-        # Build the full prompt
         full_prompt = (
             f"{bot_prompt}\n"
             f"Previous conversation: {previous_conversation[-1000:]}\n"
             f"{username}: {query}\n"
             f"{botname}:"
         )
-
-        # Initialize Gemini client
         client = genai.Client(api_key=llm_api_key_string)
-
-        # Start streaming response
-        print("Amma Lakshmi:", end=" ", flush=True)
         response_text = ""
         for chunk in client.models.generate_content_stream(
-            model="gemini-2.0-flash",  # Or your desired model
+            model="gemini-2.0-flash",
             contents=[full_prompt]
         ):
             if chunk.text:
-                print(chunk.text, end="", flush=True)
                 response_text += chunk.text
-                time.sleep(0.03)  # Optional: slow down for effect
-
-        print("\n")
-
-        # Post-process the response as before
         response_raw = response_text
         for old, new in [("User1", username), ("user1", username), ("[user1]", botname), ("[User1]", botname)]:
             response_raw = response_raw.replace(old, new)
-
         return response_raw.strip()
-
     except json.JSONDecodeError:
         return f"JSON Decode Error: Unable to parse API response."
     except KeyError as e:
@@ -220,53 +204,47 @@ mentor_questions = [
   "What's your advice for managing difficult personalities?",
   "How do you stay true to your values in your career?"
 ]
-
-response_matrix = []
+ 
 column_names = ["Question", "Length of Q", "Q Difficulty level", "Answer", "Answer Quality", "Time Taken", "Persona"]
 
-botname = "Amma Lakshmi"
-bot_origin = "Sri Lanka"
-relationship = "mentor"
-personality = sl_female_mentor
+st.title("Amma Lakshmi Mentor Q&A")
 
-username, user_gender = "Rakshita", "female"
+if "response_matrix" not in st.session_state:
+    st.session_state.response_matrix = []
 
-instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
+if st.button("Generate Mentor Q&A CSV"):
+    response_matrix = []
+    previous_conversation = ""
+    username, user_gender = "Rakshita", "female"
+    botname = "Amma Lakshmi"
+    relationship = "mentor"
+    instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
+    bot_prompt = sl_female_mentor + "Reflect on you previous replies like Layla would. You are the user's " + relationship + "so reply accordingly, without making it longer. " + instruction
+    api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"  # Replace with your actual key or use st.secrets
 
-response = ""
-previous_conversation = response
-user_message = ""
+    progress = st.progress(0)
+    for i, question in enumerate(mentor_questions):
+        start = time.time()
+        response = call_gemini_local(
+            question, previous_conversation, user_gender, username, botname, bot_prompt, api_key_string
+        )
+        end = time.time()
+        response_matrix.append([question, len(question), 0, response, 0, end - start, relationship])
+        previous_conversation = response
+        progress.progress((i + 1) / len(mentor_questions))
+    df = pd.DataFrame(response_matrix, columns=column_names)
+    df.to_csv("test_female_mentor.csv", index=False)
+    st.session_state.response_matrix = response_matrix
+    st.success("CSV generated!")
 
-bot_prompt = personality + "Reflect on you previous replies like Layla would. You are the user's " + relationship + "so reply accordingly, without making it longer. " + instruction
+    with open("test_female_mentor.csv", "rb") as f:
+        st.download_button(
+            label="Download CSV",
+            data=f,
+            file_name="test_female_mentor.csv",
+            mime="text/csv"
+        )
 
-# Pass the API key string directly
-api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
-
-for question in mentor_questions:
-
-    user_message = question
-    print(user_message)
-
-    start = time.time()
-    response = call_gemini_local(user_message, previous_conversation, user_gender, username, botname, bot_prompt, api_key_string)
-    end = time.time()
-    print("Time taken: ", end - start)
-    print("\n")
-
-    # question, length of question, ques difficulty level, answer, answer quality, time, mentor
-    response_matrix.append([user_message, len(user_message), 0, response, 0, end - start, relationship])
-
-    response = re.sub(r'\s{2,}', ' ', response).strip()
-    previous_conversation = response
-
-df = pd.DataFrame(response_matrix, columns = column_names)
-df.to_csv("test_female_mentor.csv")
-
-# After saving your CSV
-with open("test_female_mentor.csv", "rb") as f:
-    st.download_button(
-    label="Download CSV",
-    data=f,
-    file_name="test_female_mentor.csv",
-    mime="text/csv"
-)
+# Optional: Show a preview of the data
+if st.session_state.response_matrix:
+    st.dataframe(pd.DataFrame(st.session_state.response_matrix, columns=column_names))
