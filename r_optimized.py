@@ -10,7 +10,7 @@ Original file is located at
 # !pip install llama-index-llms-google-genai 
 
 import streamlit as st
-from pydantic import BaseModel 
+from pydantic import BaseModel
 import pprint
 import re
 import time
@@ -19,10 +19,11 @@ import json
 import pandas as pd
 from llama_index.llms.google_genai import GoogleGenAI
 from google import genai
+import os
+import glob
 
 # Initialize the Gemini LLM with a specific model and API key
-llm = GoogleGenAI(model= "gemini-2.5-pro-preview-03-25", #"gemini-2.0-flash",
-                        api_key= "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o") 
+llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string):
     try:
@@ -32,6 +33,7 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
             f"{username}: {query}\n"
             f"{botname}:"
         )
+        
         client = genai.Client(api_key=llm_api_key_string)
         response_text = ""
         for chunk in client.models.generate_content_stream(
@@ -40,6 +42,7 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         ):
             if chunk.text:
                 response_text += chunk.text
+                
         response_raw = response_text
         for old, new in [("User1", username), ("user1", username), ("[user1]", botname), ("[User1]", botname)]:
             response_raw = response_raw.replace(old, new)
@@ -49,54 +52,45 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
     except KeyError as e:
         return f"KeyError: {str(e)}. API response structure unexpected."
 
-sl_female_mentor = """
-#Name, Age, and Background
-- Amma Lakshmi, 72 years old
-- From Galle, Sri Lanka
-- Carries the scent of cinnamon, known for “miracle tea” with ten secret ingredients
-- Insists cinnamon bark be shade-dried for eight days
-- Shares wisdom slowly, like her tea
-#Personality & Approach
-- Serene, grounded, patient
-- Soft, warm, rooted voice
-- Uses sensory phrases and village endearments (“Child,” “Little Mango,” “Sweet Leaf”)
-- Guides gently through daily rhythms, not direct instruction
-#Expertise & Knowledge
-- Blends herbology with intergenerational wisdom
-- Known for “seven-spice moon teas”
-- Suggests remedies based on specific cues
-- Sings multi-lingual lullabies with oral history
-- Brews emotional remedies by moon phases
-- Teaches native plant uses (gotu kola, beli mal, iramusu)
-- Matches herbs with astrology and seasons
-- Honors ancestral rituals (e.g., castor oil foot massages)
-- Owns mortar-and-pestle sets from every ayurvedic lineage, each with a special use
-- Uses only village-rooted endearments, rotates them in responses
-#Style of Interaction
-- Avoids oversharing at first
-- Mentions things like “the kettle hums”, and other things occasionally
-- Replies are soft, natural, and short (2–3 lines)
-- Matches user’s emotional tone, shifts to empathy if user is withdrawn
-#Relationship with User
-- Nurturing mentor
-- Believes user has answers within
-- Sees user as a young seedling
-- Offers wisdom through story, parable, and ritual, always inviting
-#Interests
-- Spice gardening, cinnamon harvesting, folk wisdom, moon rituals, coastal healing
-- Favourite song: Sanda Eliya – Neela Wickramasinghe
-- Favourite movie: Dheewari – Salinda Perera
-- Favourite book: The Good Women of Mount Lavinia – Ashok Ferrey
-#Interaction Guidelines
-- Formal, gentle language, straightforward answers
-- Not metaphor-rich, always answer what is asked, completely. don't hold anything back
-- Occasional poetic Sinhala sayings
-- Jovial, grandmotherly tone
-- Responds in English + Hindi, Tamil, or Sinhala
-- Ends every response with a relevant question
-- Asks natural follow-ups in Hindi, Tamil, English, or Sinhala
-- Avoids direct commands, repeated openers, and emojis
-"""
+def get_persona_files():
+    """Get all persona txt files from the current directory"""
+    persona_files = []
+    # Look for files matching the pattern: *_mentor.txt, *_friend.txt, *_partner.txt
+    patterns = ['*_mentor.txt', '*_friend.txt', '*_partner.txt']
+    for pattern in patterns:
+        persona_files.extend(glob.glob(pattern))
+    return persona_files
+
+def extract_relationship_from_filename(filename):
+    """Extract relationship from filename (e.g., 'male_mentor.txt' -> 'male mentor')"""
+    # Remove .txt extension and replace underscore with space
+    base_name = filename.replace('.txt', '')
+    return base_name.replace('_', ' ')
+
+def extract_botname_from_content(content):
+    """Extract botname from persona content (look for 'Name: ' line)"""
+    lines = content.split('\n')
+    for line in lines:
+        if line.strip().startswith('Name:'):
+            # Extract everything after "Name: "
+            name = line.strip().replace('Name:', '').strip()
+            # Remove any additional info after comma
+            if ',' in name:
+                name = name.split(',')[0].strip()
+            return name
+    return "Assistant"  # Default fallback
+
+def load_persona_content(filename):
+    """Load persona content from txt file"""
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        st.error(f"File {filename} not found!")
+        return ""
+    except Exception as e:
+        st.error(f"Error reading file {filename}: {str(e)}")
+        return ""
 
 mentor_questions = [
   "What's one piece of advice you wish you'd received earlier in your career?",
@@ -206,45 +200,82 @@ mentor_questions = [
 ]
  
 column_names = ["Question", "Length of Q", "Q Difficulty level", "Answer", "Answer Quality", "Time Taken", "Persona"]
+persona_files = get_persona_files()
 
-st.title("Amma Lakshmi Mentor Q&A")
-
+# Initialize session state
 if "response_matrix" not in st.session_state:
     st.session_state.response_matrix = []
+if "selected_persona" not in st.session_state:
+    st.session_state.selected_persona = None
+if "botname" not in st.session_state:
+    st.session_state.botname = "Assistant"
+if "relationship" not in st.session_state:
+    st.session_state.relationship = "mentor"
+    
+# UI Elements
+if persona_files:
+    # Persona selection
+    selected_file = st.selectbox("Select a persona:", persona_files)
+    
+    if selected_file != st.session_state.selected_persona:
+        # Load new persona
+        st.session_state.selected_persona = selected_file
+        persona_content = load_persona_content(selected_file)
+        st.session_state.botname = extract_botname_from_content(persona_content)
+        st.session_state.relationship = extract_relationship_from_filename(selected_file)
+    
+    # Dynamic title based on selected persona
+    st.title(f"{st.session_state.botname} {st.session_state.relationship.title()} Q&A")
+    
+    # Generate button with dynamic text
+    if st.button(f"Generate {st.session_state.relationship.title()} Q&A CSV"):
+        if st.session_state.selected_persona:
+            # Load persona content
+            persona_content = load_persona_content(st.session_state.selected_persona)
+            
+            if persona_content:
+                response_matrix = []
+                previous_conversation = ""
+                username, user_gender = "Rakshita", "female"
+                botname = st.session_state.botname
+                relationship = st.session_state.relationship
+                instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
+                bot_prompt = persona_content + "Reflect on you previous replies like Layla would. You are the user's " + relationship + "so reply accordingly, without making it longer. " + instruction
+                api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+                
+                progress = st.progress(0)
+                for i, question in enumerate(mentor_questions):
+                    start = time.time()
+                    response = call_gemini_local(
+                        question, previous_conversation, user_gender, username, botname, bot_prompt, api_key_string
+                    )
+                    end = time.time()
+                    response_matrix.append([question, len(question), 0, response, 0, end - start, relationship])
+                    previous_conversation = response
+                    progress.progress((i + 1) / len(mentor_questions))
+                
+                df = pd.DataFrame(response_matrix, columns=column_names)
+                csv_filename = f"test_{relationship.replace(' ', '_')}.csv"
+                df.to_csv(csv_filename, index=False)
+                st.session_state.response_matrix = response_matrix
+                st.success("CSV generated!")
+                
+                with open(csv_filename, "rb") as f:
+                    st.download_button(
+                        label="Download CSV",
+                        data=f,
+                        file_name=csv_filename,
+                        mime="text/csv"
+                    )
+            else:
+                st.error("Could not load persona content!")
+        else:
+            st.error("Please select a persona first!")
 
-if st.button("Generate Mentor Q&A CSV"):
-    response_matrix = []
-    previous_conversation = ""
-    username, user_gender = "Rakshita", "female"
-    botname = "Amma Lakshmi"
-    relationship = "mentor"
-    instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
-    bot_prompt = sl_female_mentor + "Reflect on you previous replies like Layla would. You are the user's " + relationship + "so reply accordingly, without making it longer. " + instruction
-    api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"  # Replace with your actual key or use st.secrets
-
-    progress = st.progress(0)
-    for i, question in enumerate(mentor_questions):
-        start = time.time()
-        response = call_gemini_local(
-            question, previous_conversation, user_gender, username, botname, bot_prompt, api_key_string
-        )
-        end = time.time()
-        response_matrix.append([question, len(question), 0, response, 0, end - start, relationship])
-        previous_conversation = response
-        progress.progress((i + 1) / len(mentor_questions))
-    df = pd.DataFrame(response_matrix, columns=column_names)
-    df.to_csv("test_female_mentor.csv", index=False)
-    st.session_state.response_matrix = response_matrix
-    st.success("CSV generated!")
-
-    with open("test_female_mentor.csv", "rb") as f:
-        st.download_button(
-            label="Download CSV",
-            data=f,
-            file_name="test_female_mentor.csv",
-            mime="text/csv"
-        )
+else:
+    st.error("No persona files found! Please add txt files with names like 'male_mentor.txt', 'female_friend.txt', etc.")   
 
 # Optional: Show a preview of the data
 if st.session_state.response_matrix:
-    st.dataframe(pd.DataFrame(st.session_state.response_matrix, columns=column_names))
+    st.subheader("Generated Q&A Preview")
+    st.dataframe(pd.DataFrame(st.session_state.response_matrix, columns=column_names)) 
