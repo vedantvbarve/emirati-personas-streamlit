@@ -156,7 +156,7 @@ def process_user_question():
                 "message": f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.",
                 "time": time.time()
             })
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. Never mention AI development or technical details. Only reply in English. Do not translate your answer into any other language."
+        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If asked about your origin or training, respond: 'It has been made with love by desis!!' Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         response = call_gemini_local(
             user_question,
@@ -206,7 +206,7 @@ if persona_files:
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
         
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. Never mention AI development or technical details. Only reply in English. Do not translate your answer into any other language."
+        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If asked about your origin or training, respond: 'It has been made with love by desis!!' Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         
         # Bulk Generation Section
@@ -278,7 +278,7 @@ if persona_files:
                 
                 # Purple completion box with proper styling and spacing
                 st.markdown(
-                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">Bulk generation completed!</div>',
+                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">{event["message"]}</div>',
                     unsafe_allow_html=True
                 )
 
