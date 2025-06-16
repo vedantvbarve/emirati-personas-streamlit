@@ -6,7 +6,7 @@ Original file is located at
     https://colab.research.google.com/drive/15bLkrgQW-nSRvDS5x_Xl04kduyMlfT8O
 """
 
-# !pip install llama-index-llms-google-genai 
+# !pip install llama-index-llms-google-genai
 
 import streamlit as st
 import time
@@ -138,7 +138,8 @@ defaults = {
     'show_resume': False,
     'persona_content': "",
     'user_input': "",
-    'conversation_events': []  # New: Track all conversation events
+    'conversation_events': [],
+    'last_user_answer': None
 }
 for key, val in defaults.items():
     if key not in st.session_state:
@@ -177,6 +178,7 @@ def process_user_question():
             "time": time.time()
         })
         st.session_state.previous_conversation += f"\n{user_question}\n{response}"
+        st.session_state.last_user_answer = (user_question, response)
         
         # Add user conversation event
         st.session_state.conversation_events.append({
@@ -199,7 +201,7 @@ if persona_files:
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         st.session_state.questions = load_questions(relationship.split()[-1])
-        # Reset all states when persona changes
+        # Reset states when persona changes
         st.session_state.response_matrix = []
         st.session_state.csv_filename = None
         st.session_state.bulk_running = False
@@ -210,6 +212,7 @@ if persona_files:
         st.session_state.previous_conversation = ""
         st.session_state.user_input = ""
         st.session_state.conversation_events = []
+        st.session_state.last_user_answer = None
 
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
@@ -306,10 +309,16 @@ if persona_files:
                     key="download_csv"
                 )
 
-        # Complete Conversation History
+        # Latest Conversation (only most recent user Q&A)
+        if st.session_state.last_user_answer:
+            st.subheader("Latest Conversation")
+            st.markdown(f"**You**: {st.session_state.last_user_answer[0]}")
+            st.markdown(f"**{st.session_state.botname}**: {st.session_state.last_user_answer[1]}")
+
+        # Complete Conversation History - ALWAYS SHOW, even if empty
+        st.subheader("Complete Conversation History")
+        
         if st.session_state.conversation_events:
-            st.subheader("Complete Conversation History")
-            
             # Sort all events by time
             sorted_events = sorted(st.session_state.conversation_events, key=lambda x: x["time"])
             
@@ -317,6 +326,7 @@ if persona_files:
                 if event["type"] == "user_qa":
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
+                    st.markdown("")  # Add spacing
                 
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
@@ -337,6 +347,8 @@ if persona_files:
                     st.markdown("---")
                     st.success(event["message"])
                     st.markdown("---")
+        else:
+            st.write("*No conversation history yet. Start by asking a question or beginning bulk generation.*")
 
     else:
         if not st.session_state.questions:
