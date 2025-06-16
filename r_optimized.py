@@ -319,8 +319,7 @@ if persona_files:
                     st.markdown("---")
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
-                    st.success("**Bulk generation resumed**")
-                    st.markdown("---")
+                    st.success("**Bulk generation resumed**") 
                 elif event["type"] == "bulk_completed":
                     st.markdown("---")
                     st.success(event["message"])
