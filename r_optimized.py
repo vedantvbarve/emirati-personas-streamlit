@@ -73,10 +73,7 @@ def extract_bot_details_from_content(content):
     origin = "Unknown origin"
     
     # Debug: Show first few lines of content
-    lines = content.split('\n')
-    st.write("Debug - First 10 lines of persona file:")
-    for i, line in enumerate(lines[:10]):
-        st.write(f"Line {i+1}: '{line.strip()}'")
+    lines = content.split('\n') 
     
     for line in lines:
         line = line.strip()
@@ -103,11 +100,7 @@ def extract_bot_details_from_content(content):
             origin = line.split('Origin:')[1].strip()
         elif line.startswith('From '):
             # Alternative format: "From Galle, Sri Lanka"
-            origin = line.replace('From ', '', 1).strip()
-    
-    # Debug output
-    st.write(f"Debug - Extracted botname: '{botname}'")
-    st.write(f"Debug - Extracted origin: '{origin}'")
+            origin = line.replace('From ', '', 1).strip() 
     
     return botname, origin
 
@@ -115,8 +108,7 @@ def load_persona_content(filename):
     """Load persona content from txt file"""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
-            content = f.read()
-        st.write(f"Debug - Loaded {len(content)} characters from {filename}")
+            content = f.read() 
         return content
     except Exception as e:
         st.error(f"Error reading persona file: {str(e)}")
@@ -127,8 +119,7 @@ def load_questions(relationship_type):
     question_file = os.path.join(QUESTIONS_FOLDER, f"{relationship_type}_questions.txt")
     try:
         with open(question_file, 'r', encoding='utf-8') as f:
-            questions = [line.strip() for line in f if line.strip()]
-        st.write(f"Debug - Loaded {len(questions)} questions for {relationship_type}")
+            questions = [line.strip() for line in f if line.strip()] 
         return questions
     except FileNotFoundError:
         st.error(f"Question file not found: {question_file}")
