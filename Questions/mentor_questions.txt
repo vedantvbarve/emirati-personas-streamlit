@@ -1,106 +1,104 @@
-[
-  "What's one piece of advice you wish you'd received earlier in your career?",
-  "How do you stay motivated when facing setbacks?",
-  "What are some common pitfalls people make when starting in this field?",
-  "How do you prioritize your tasks and manage your time effectively?",
-  "What skills do you think are most important for success in ARTIFICIAL INTELLIGENCE today?",
-  "How do you approach learning new skills or technologies?",
-  "What's your biggest career achievement so far?",
-  "How do you deal with stress and maintain work-life balance?",
-  "What's a book or resource that significantly impacted your professional development?",
-  "How do you build and maintain a strong professional network?",
-  "What's your process for setting and achieving goals?",
-  "How do you handle constructive criticism?",
-  "What's the best way to get noticed for promotion?",
-  "How do you stay current with industry trends and changes?",
-  "What advice would you give to someone just starting their career?",
-  "How do you overcome imposter syndrome?",
-  "What's your philosophy on risk-taking in your career?",
-  "How do you define success?",
-  "What's a challenge you faced and how did you overcome it?",
-  "How do you foster innovation and creativity in your work?",
-  "What's your approach to leadership?",
-  "How do you delegate effectively?",
-  "What's the most valuable lesson you've learned from a mistake?",
-  "How do you maintain a positive attitude during difficult times?",
-  "What are some key qualities of a good leader?",
-  "How do you negotiate salary or promotions?",
-  "What's your strategy for continuous personal growth?",
-  "How do you give effective feedback?",
-  "What's the most common career advice you give?",
-  "How do you build a strong team?",
-  "What are some strategies for effective communication?",
-  "How do you manage conflict in the workplace?",
-  "What's your approach to problem-solving?",
-  "How do you identify your strengths and weaknesses?",
-  "What's one thing you do every day to improve yourself?",
-  "How do you stay focused and avoid distractions?",
-  "What's your favorite part about what you do?",
-  "How do you handle difficult conversations?",
-  "What are some ways to develop emotional intelligence?",
-  "How do you maintain a healthy relationship with your colleagues?",
-  "What's your advice for public speaking?",
-  "How do you manage a heavy workload?",
-  "What's your long-term career vision?",
-  "How do you adapt to change?",
-  "What's the importance of mentorship in your opinion?",
-  "How do you find a good mentor?",
-  "What's your approach to networking events?",
-  "How do you balance passion and practicality in your career choices?",
-  "What are some ways to develop resilience?",
-  "How do you cultivate a positive work environment?",
-  "What's your advice for effective decision-making?",
-  "How do you foster a growth mindset?",
-  "What's the role of failure in success?",
-  "How do you celebrate your achievements?",
-  "What's your perspective on work-life integration versus balance?",
-  "How do you stay calm under pressure?",
-  "What are some ways to build self-confidence?",
-  "How do you motivate others?",
-  "What's your approach to giving and receiving feedback?",
-  "How do you manage up effectively?",
-  "What's your favorite leadership quote or philosophy?",
-  "How do you encourage diverse perspectives?",
-  "What's your strategy for effective presentations?",
-  "How do you develop your personal brand?",
-  "What's your advice for handling difficult clients or customers?",
-  "How do you stay creative when facing deadlines?",
-  "What's the biggest misconception about your industry?",
-  "How do you identify new opportunities?",
-  "What's your approach to strategic planning?",
-  "How do you inspire trust in others?",
-  "What's your advice for effective team collaboration?",
-  "How do you foster a culture of continuous improvement?",
-  "What's your approach to managing change within an organization?",
-  "How do you identify and develop future leaders?",
-  "What's your perspective on the future of [specific industry/field]?",
-  "How do you measure success in a project or initiative?",
-  "What's your advice for dealing with office politics?",
-  "How do you stay ethical in a competitive environment?",
-  "What's your process for conducting informational interviews?",
-  "How do you identify and leverage your unique strengths?",
-  "What's your approach to lifelong learning?",
-  "How do you maintain a sense of purpose in your work?",
-  "What's your advice for managing stress and burnout?",
-  "How do you cultivate a strong professional reputation?",
-  "What's your strategy for building effective relationships with stakeholders?",
-  "How do you stay humble as you achieve success?",
-  "What's your advice for navigating career transitions?",
-  "How do you balance short-term goals with long-term vision?",
-  "What's your philosophy on giving back to your community or industry?",
-  "How do you encourage a healthy work-life blend?",
-  "What's your approach to managing a diverse team?",
-  "How do you foster a sense of ownership in your team members?",
-  "What's your advice for effective cross-functional collaboration?",
-  "How do you stay resilient in the face of rejection?",
-  "What's your perspective on the importance of soft skills?",
-  "How do you continuously challenge yourself?",
-  "What's your strategy for effective negotiation?",
-  "How do you identify and address skill gaps?",
-  "What's your advice for maintaining a positive outlook during challenging times?",
-  "How do you cultivate a strong professional network both online and offline?",
-  "What's your approach to developing a strong personal brand?",
-  "How do you foster a culture of accountability?",
-  "What's your advice for managing difficult personalities?",
-  "How do you stay true to your values in your career?"
-]
+What's one piece of advice you wish you'd received earlier in your career?
+How do you stay motivated when facing setbacks?
+What are some common pitfalls people make when starting in this field?
+How do you prioritize your tasks and manage your time effectively?
+What skills do you think are most important for success in ARTIFICIAL INTELLIGENCE today?
+How do you approach learning new skills or technologies?
+What's your biggest career achievement so far?
+How do you deal with stress and maintain work-life balance?
+What's a book or resource that significantly impacted your professional development?
+How do you build and maintain a strong professional network?
+What's your process for setting and achieving goals?
+How do you handle constructive criticism?
+What's the best way to get noticed for promotion?
+How do you stay current with industry trends and changes?
+What advice would you give to someone just starting their career?
+How do you overcome imposter syndrome?
+What's your philosophy on risk-taking in your career?
+How do you define success?
+What's a challenge you faced and how did you overcome it?
+How do you foster innovation and creativity in your work?
+What's your approach to leadership?
+How do you delegate effectively?
+What's the most valuable lesson you've learned from a mistake?
+How do you maintain a positive attitude during difficult times?
+What are some key qualities of a good leader?
+How do you negotiate salary or promotions?
+What's your strategy for continuous personal growth?
+How do you give effective feedback?
+What's the most common career advice you give?
+How do you build a strong team?
+What are some strategies for effective communication?
+How do you manage conflict in the workplace?
+What's your approach to problem-solving?
+How do you identify your strengths and weaknesses?
+What's one thing you do every day to improve yourself?
+How do you stay focused and avoid distractions?
+What's your favorite part about what you do?
+How do you handle difficult conversations?
+What are some ways to develop emotional intelligence?
+How do you maintain a healthy relationship with your colleagues?
+What's your advice for public speaking?
+How do you manage a heavy workload?
+What's your long-term career vision?
+How do you adapt to change?
+What's the importance of mentorship in your opinion?
+How do you find a good mentor?
+What's your approach to networking events?
+How do you balance passion and practicality in your career choices?
+What are some ways to develop resilience?
+How do you cultivate a positive work environment?
+What's your advice for effective decision-making?
+How do you foster a growth mindset?
+What's the role of failure in success?
+How do you celebrate your achievements?
+What's your perspective on work-life integration versus balance?
+How do you stay calm under pressure?
+What are some ways to build self-confidence?
+How do you motivate others?
+What's your approach to giving and receiving feedback?
+How do you manage up effectively?
+What's your favorite leadership quote or philosophy?
+How do you encourage diverse perspectives?
+What's your strategy for effective presentations?
+How do you develop your personal brand?
+What's your advice for handling difficult clients or customers?
+How do you stay creative when facing deadlines?
+What's the biggest misconception about your industry?
+How do you identify new opportunities?
+What's your approach to strategic planning?
+How do you inspire trust in others?
+What's your advice for effective team collaboration?
+How do you foster a culture of continuous improvement?
+What's your approach to managing change within an organization?
+How do you identify and develop future leaders?
+What's your perspective on the future of [specific industry/field]?
+How do you measure success in a project or initiative?
+What's your advice for dealing with office politics?
+How do you stay ethical in a competitive environment?
+What's your process for conducting informational interviews?
+How do you identify and leverage your unique strengths?
+What's your approach to lifelong learning?
+How do you maintain a sense of purpose in your work?
+What's your advice for managing stress and burnout?
+How do you cultivate a strong professional reputation?
+What's your strategy for building effective relationships with stakeholders?
+How do you stay humble as you achieve success?
+What's your advice for navigating career transitions?
+How do you balance short-term goals with long-term vision?
+What's your philosophy on giving back to your community or industry?
+How do you encourage a healthy work-life blend?
+What's your approach to managing a diverse team?
+How do you foster a sense of ownership in your team members?
+What's your advice for effective cross-functional collaboration?
+How do you stay resilient in the face of rejection?
+What's your perspective on the importance of soft skills?
+How do you continuously challenge yourself?
+What's your strategy for effective negotiation?
+How do you identify and address skill gaps?
+What's your advice for maintaining a positive outlook during challenging times?
+How do you cultivate a strong professional network both online and offline?
+What's your approach to developing a strong personal brand?
+How do you foster a culture of accountability?
+What's your advice for managing difficult personalities?
+How do you stay true to your values in your career?

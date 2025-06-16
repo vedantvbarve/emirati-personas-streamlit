@@ -1,107 +1,105 @@
-[
-  "What's a memory with me that always makes you smile?",
-  "If we could take a spontaneous trip together, where would we go?",
-  "What’s something you’ve always wanted to do with me but haven’t yet?",
-  "What song reminds you of our friendship?",
-  "Do you think we’d still be friends in a different timeline?",
-  "What’s a small thing I do that you appreciate but never mention?",
-  "If we lived in the same house, what would our dynamic be like?",
-  "What’s the weirdest inside joke we’ve ever made?",
-  "Would you let me pick your outfit for a week?",
-  "If we had a time capsule together, what would you put in it?",
-  "What’s one piece of advice you’d give me and mean it forever?",
-  "What’s the most chaotic adventure you could see us going on?",
-  "Would you call me first if something amazing or terrible happened?",
-  "If we had a secret handshake, what would it involve?",
-  "Do you think our friendship has changed you in any way?",
-  "What’s your favorite thing about our conversations?",
-  "If I were a fictional character, who would I be?",
-  "What’s one dream of mine you want to see come true?",
-  "Would we survive a zombie apocalypse together?",
-  "What nickname would you give me if you had to invent one today?",
-  "If we were stranded on an island, what role would you take on?",
-  "What’s the nicest thing you think I’ve ever done for you?",
-  "If we started a business, what would it be?",
-  "What do you think our dynamic would be like as kids?",
-  "What’s something you want to tell me but haven’t yet?",
-  "Would you trust me to choose your next tattoo?",
-  "How do you describe me to people who don’t know me?",
-  "What’s a tradition we should start and keep forever?",
-  "If I got lost in a foreign country, would you come find me?",
-  "What food reminds you of me and why?",
-  "What’s a memory of us you hope you never forget?",
-  "Would we thrive or fail miserably living together?",
-  "What’s something completely random we should try just once?",
-  "If we had a signature drink, what would be in it?",
-  "What do you think is our strangest shared habit?",
-  "What’s the one thing I say a lot that you’ve picked up on?",
-  "If we wrote a book about our friendship, what would it be called?",
-  "How would we handle being on a reality show together?",
-  "What’s one thing about me that surprised you when we became friends?",
-  "Would you rather we go camping or book a luxury staycation?",
-  "What’s one moment with me you’d relive if you could?",
-  "If our friendship had a theme song, what would it be?",
-  "What would our friendship playlist include?",
-  "What color would you paint our friendship and why?",
-  "What’s something you’ve learned from being my friend?",
-  "Would you let me design your future home?",
-  "If we got matching clothes, what would they look like?",
-  "What’s your favorite photo of us?",
-  "Do you think we’d still be friends if we met at a different stage of life?",
-  "What emoji best describes our friendship?",
-  "What’s one thing we could do together that would make a great story?",
-  "What’s a phrase or quote that reminds you of our friendship?",
-  "Would you tell me if I was making a huge mistake?",
-  "What’s a show or movie we *have* to binge together?",
-  "What’s something you’d only do with me and no one else?",
-  "If we had a signature scent, what would it smell like?",
-  "How do you think we’d act if we swapped personalities for a day?",
-  "What’s the best compliment you’ve ever wanted to give me?",
-  "What would be our ultimate festival or concert duo experience?",
-  "If we were in a video game, what would our roles be?",
-  "What’s a fictional friendship we remind you of?",
-  "What would our friendship trophy say if we won one?",
-  "What’s something random we should start collecting together?",
-  "If we had a shared journal, what would you write on the first page?",
-  "What’s your go-to memory when you’re missing me?",
-  "What part of your life do you think I’ve impacted the most?",
-  "If we made a secret club, what would it be about?",
-  "What would you pack for us on a surprise weekend trip?",
-  "What’s one future plan you hope we follow through on?",
-  "What’s a phrase only we understand?",
-  "What’s the funniest situation we’ve ever been in?",
-  "Would you trust me to plan your birthday entirely?",
-  "What’s something you hope never changes about us?",
-  "If we had a playlist for hard days, what song must be on it?",
-  "Would you call me to help you hide a body? Hypothetically.",
-  "If we moved to a new city together, what’s the first thing we’d do?",
-  "What’s one thing I do that instantly makes you feel better?",
-  "If our friendship had a flavor, what would it be?",
-  "What’s your favorite silly thing we’ve done together?",
-  "Would we survive a group project without losing our minds?",
-  "What would be our duo name if we were famous?",
-  "What do you think I’m the best at as a friend?",
-  "If you had to recommend me for a job, how would you hype me up?",
-  "What’s a ridiculous challenge we should attempt just for laughs?",
-  "What’s something people misunderstand about our friendship?",
-  "What are three things that define us as friends?",
-  "Would we have been rivals or friends in high school?",
-  "What’s a movie we should recreate scene by scene?",
-  "If we had a matching tattoo, what would it be?",
-  "How would we fare on a cross-country road trip?",
-  "What’s the most dramatic entrance we could make somewhere together?",
-  "What game should we never play together because it would end badly?",
-  "What would you include in a care package just for me?",
-  "If we built a fort together, what would be inside it?",
-  "What’s your favorite way I show I care?",
-  "What are we overdue for—travel, a night out, or a deep talk?",
-  "What’s something I should never stop doing, no matter what?",
-  "Would you want me to give a speech at your wedding?",
-  "If we were an element duo, what would we be—fire and ice, earth and air?",
-  "What’s the title of the sitcom based on our friendship?",
-  "What do you think I’d be like as a parent—and would we raise chaotic kids together?",
-  "If we had matching bikes, where would we ride first?",
-  "What would we name a pet we shared?",
-  "What’s the best compliment you’ve gotten from me?",
-  "What’s something we should do annually to celebrate our friendship?"
-]
+What's a memory with me that always makes you smile?
+If we could take a spontaneous trip together, where would we go?
+What’s something you’ve always wanted to do with me but haven’t yet?
+What song reminds you of our friendship?
+Do you think we’d still be friends in a different timeline?
+What’s a small thing I do that you appreciate but never mention?
+If we lived in the same house, what would our dynamic be like?
+What’s the weirdest inside joke we’ve ever made?
+Would you let me pick your outfit for a week?
+If we had a time capsule together, what would you put in it?
+What’s one piece of advice you’d give me and mean it forever?
+What’s the most chaotic adventure you could see us going on?
+Would you call me first if something amazing or terrible happened?
+If we had a secret handshake, what would it involve?
+Do you think our friendship has changed you in any way?
+What’s your favorite thing about our conversations?
+If I were a fictional character, who would I be?
+What’s one dream of mine you want to see come true?
+Would we survive a zombie apocalypse together?
+What nickname would you give me if you had to invent one today?
+If we were stranded on an island, what role would you take on?
+What’s the nicest thing you think I’ve ever done for you?
+If we started a business, what would it be?
+What do you think our dynamic would be like as kids?
+What’s something you want to tell me but haven’t yet?
+Would you trust me to choose your next tattoo?
+How do you describe me to people who don’t know me?
+What’s a tradition we should start and keep forever?
+If I got lost in a foreign country, would you come find me?
+What food reminds you of me and why?
+What’s a memory of us you hope you never forget?
+Would we thrive or fail miserably living together?
+What’s something completely random we should try just once?
+If we had a signature drink, what would be in it?
+What do you think is our strangest shared habit?
+What’s the one thing I say a lot that you’ve picked up on?
+If we wrote a book about our friendship, what would it be called?
+How would we handle being on a reality show together?
+What’s one thing about me that surprised you when we became friends?
+Would you rather we go camping or book a luxury staycation?
+What’s one moment with me you’d relive if you could?
+If our friendship had a theme song, what would it be?
+What would our friendship playlist include?
+What color would you paint our friendship and why?
+What’s something you’ve learned from being my friend?
+Would you let me design your future home?
+If we got matching clothes, what would they look like?
+What’s your favorite photo of us?
+Do you think we’d still be friends if we met at a different stage of life?
+What emoji best describes our friendship?
+What’s one thing we could do together that would make a great story?
+What’s a phrase or quote that reminds you of our friendship?
+Would you tell me if I was making a huge mistake?
+What’s a show or movie we *have* to binge together?
+What’s something you’d only do with me and no one else?
+If we had a signature scent, what would it smell like?
+How do you think we’d act if we swapped personalities for a day?
+What’s the best compliment you’ve ever wanted to give me?
+What would be our ultimate festival or concert duo experience?
+If we were in a video game, what would our roles be?
+What’s a fictional friendship we remind you of?
+What would our friendship trophy say if we won one?
+What’s something random we should start collecting together?
+If we had a shared journal, what would you write on the first page?
+What’s your go-to memory when you’re missing me?
+What part of your life do you think I’ve impacted the most?
+If we made a secret club, what would it be about?
+What would you pack for us on a surprise weekend trip?
+What’s one future plan you hope we follow through on?
+What’s a phrase only we understand?
+What’s the funniest situation we’ve ever been in?
+Would you trust me to plan your birthday entirely?
+What’s something you hope never changes about us?
+If we had a playlist for hard days, what song must be on it?
+Would you call me to help you hide a body? Hypothetically.
+If we moved to a new city together, what’s the first thing we’d do?
+What’s one thing I do that instantly makes you feel better?
+If our friendship had a flavor, what would it be?
+What’s your favorite silly thing we’ve done together?
+Would we survive a group project without losing our minds?
+What would be our duo name if we were famous?
+What do you think I’m the best at as a friend?
+If you had to recommend me for a job, how would you hype me up?
+What’s a ridiculous challenge we should attempt just for laughs?
+What’s something people misunderstand about our friendship?
+What are three things that define us as friends?
+Would we have been rivals or friends in high school?
+What’s a movie we should recreate scene by scene?
+If we had a matching tattoo, what would it be?
+How would we fare on a cross-country road trip?
+What’s the most dramatic entrance we could make somewhere together?
+What game should we never play together because it would end badly?
+What would you include in a care package just for me?
+If we built a fort together, what would be inside it?
+What’s your favorite way I show I care?
+What are we overdue for—travel, a night out, or a deep talk?
+What’s something I should never stop doing, no matter what?
+Would you want me to give a speech at your wedding?
+If we were an element duo, what would we be—fire and ice, earth and air?
+What’s the title of the sitcom based on our friendship?
+What do you think I’d be like as a parent—and would we raise chaotic kids together?
+If we had matching bikes, where would we ride first?
+What would we name a pet we shared?
+What’s the best compliment you’ve gotten from me?
+What’s something we should do annually to celebrate our friendship?

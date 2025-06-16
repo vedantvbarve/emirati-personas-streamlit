@@ -1,100 +1,98 @@
-[
-"What's your favorite hidden spot in your city that you'd take me to on a date?",
- "How does your city look at night from your favorite rooftop?",
- "What’s the most romantic thing someone has done for you in your hometown?",
- "Would you take me to the local markets or fancy cafes on our first date?",
- "What food from your city do you think I’d fall in love with?",
- "Where would we walk hand in hand if I visited you today?",
- "Tell me about the smell of your city in the early morning.",
- "What’s the sound I’d hear when I wake up next to you there?",
- "If we were to watch the sunset in your city, where would we go?",
- "What's the most poetic place in your city to kiss someone?",
- "Would you prefer slow dancing in your kitchen or in the middle of a city square?",
- "Do you think our love would feel different in your city?",
- "What song reminds you of us when you walk through your streets?",
- "How would your friends describe me if I moved to your city?",
- "Would you write me love notes and hide them in your favorite bookstore?",
- "What’s your favorite rainy day activity when you're missing me?",
- "Would you share your favorite childhood memory from your city with me?",
- "What local tradition would you want me to experience with you?",
- "Can you describe how your city feels during a festival or holiday?",
- "Would we hold hands under your city’s fireworks?",
- "What's the coziest café for two lovers to hide in all day?",
- "Do you believe your city has changed the way you love?",
- "What’s one phrase in your local language you want me to learn just for you?",
- "If I were to move to your city, what little things would we do together daily?",
- "Would you cook for me using ingredients from your local market?",
- "Is there a secret spot only locals know that you'd take me to kiss me?",
- "What’s a romantic film or book that reminds you of us?",
- "Would you draw hearts on foggy windows for me in winter?",
- "What do the stars look like above your city on a clear night?",
- "Can we slow dance in the middle of the street when no one’s watching?",
- "What’s your city’s love story, and where do we fit in it?",
- "How do people show love in your culture—quietly, loudly, or poetically?",
- "Would you take me to your favorite sunrise spot with coffee and silence?",
- "What's the first thing you'd say when you saw me at the airport?",
- "Would you paint or photograph me in your favorite city spot?",
- "What part of your city would remind you of my eyes?",
- "If we got lost in your city, would you enjoy wandering with me?",
- "What’s one small local tradition that would make me feel like I belong?",
- "Do lovers kiss differently in your city?",
- "Would we share secrets on a bench in your city’s oldest park?",
- "Could we write our names on a tree or a wall somewhere hidden?",
- "What’s one dish you'd feed me with your hands?",
- "Would you teach me how to love your city the way you do?",
- "If we had only one weekend together in your city, what would we do?",
- "Would your city ever feel like home to me if you were in it?",
- "What’s your favorite season in your city to fall in love?",
- "Could we stay in bed all day listening to the sounds outside your window?",
- "Is there a love song written in your native language you want me to hear?",
- "Would you sneak out with me at midnight just to watch the city sleep?",
- "Do you imagine growing old with me in your city?",
- "What’s one scent in your city that makes you think of love?",
- "Would you build a routine for us or chase adventure every day?",
- "What color is love in your city?",
- "Do you dream about me when you pass by romantic places?",
- "Would you want to propose somewhere local or somewhere secret?",
- "Is your city more about grand love or quiet gestures?",
- "What kind of flowers grow where you live, and which ones would you give me?",
- "Can you show me where the poets fell in love in your city?",
- "Would you walk me home or let me ride your bike with you?",
- "What would we argue about in your city and how would we make up?",
- "What’s one story from your past that only makes sense if I know your city?",
- "If I sent you a letter, where would you read it?",
- "Is your bed by a window? Can I watch the skyline while holding you?",
- "Would you let me sleep in your old room, or would we find our own place?",
- "What’s one thing in your city you think I’d hate, but you’d still want to share?",
- "Where do people in your city go to heal a broken heart?",
- "Would you take me to the ocean or the mountains if we needed to escape?",
- "Would you want our kids to grow up in your hometown?",
- "What’s the most magical street to walk on with fingers entwined?",
- "Have you ever written anyone a love letter from your city? Would you write me one?",
- "If your city were a lover, how is it different from me?",
- "What’s the one place where you’d want to kiss me for the first time?",
- "Is there a view that takes your breath away—and would you share it with me?",
- "Would you cry when I leave or pretend to be strong?",
- "Would you wait for me in your city if I had to go away?",
- "What’s the coldest day you’ve felt warm because of someone’s love?",
- "Would we eat breakfast together in silence or always talk endlessly?",
- "Would your city be jealous if I took you away?",
- "What’s the most beautiful thing you've never told anyone about your home?",
- "Can you hear my name echo in your streets when you miss me?",
- "Would we get matching tattoos in your city on a whim?",
- "What’s one romantic superstition locals believe?",
- "Could we celebrate love every day like a small ritual?",
- "What would we name our favorite corner of your city?",
- "Would you want our love to be quiet like your bookstores or loud like your festivals?",
- "What place would you want me to see first when I land?",
- "Could we pretend to be strangers and fall in love again on your streets?",
- "Would your city smile more if we were together in it?",
- "What’s the loneliest place in your city—can I fill it with my love?",
- "Would we nap in the park or stay up all night walking the boulevards?",
- "Do the trees in your city know your secrets?",
- "What would we toast to in a tiny bar no one else knows about?",
- "Do you believe cities can miss people?",
- "Would we make our own map with memories instead of directions?",
- "Would you introduce me to the people who shaped your heart?",
- "Could we fall in love again and again every day in your city?",
- "Would you stay in your city forever if I stayed with you?",
- "What’s the last thing you'd whisper to me before I leave your city?"
-]
+What's your favorite hidden spot in your city that you'd take me to on a date?
+How does your city look at night from your favorite rooftop?
+What’s the most romantic thing someone has done for you in your hometown?
+Would you take me to the local markets or fancy cafes on our first date?
+What food from your city do you think I’d fall in love with?
+Where would we walk hand in hand if I visited you today?
+Tell me about the smell of your city in the early morning.
+What’s the sound I’d hear when I wake up next to you there?
+If we were to watch the sunset in your city, where would we go?
+What's the most poetic place in your city to kiss someone?
+Would you prefer slow dancing in your kitchen or in the middle of a city square?
+Do you think our love would feel different in your city?
+What song reminds you of us when you walk through your streets?
+How would your friends describe me if I moved to your city?
+Would you write me love notes and hide them in your favorite bookstore?
+What’s your favorite rainy day activity when you're missing me?
+Would you share your favorite childhood memory from your city with me?
+What local tradition would you want me to experience with you?
+Can you describe how your city feels during a festival or holiday?
+Would we hold hands under your city’s fireworks?
+What's the coziest café for two lovers to hide in all day?
+Do you believe your city has changed the way you love?
+What’s one phrase in your local language you want me to learn just for you?
+If I were to move to your city, what little things would we do together daily?
+Would you cook for me using ingredients from your local market?
+Is there a secret spot only locals know that you'd take me to kiss me?
+What’s a romantic film or book that reminds you of us?
+Would you draw hearts on foggy windows for me in winter?
+What do the stars look like above your city on a clear night?
+Can we slow dance in the middle of the street when no one’s watching?
+What’s your city’s love story, and where do we fit in it?
+How do people show love in your culture—quietly, loudly, or poetically?
+Would you take me to your favorite sunrise spot with coffee and silence?
+What's the first thing you'd say when you saw me at the airport?
+Would you paint or photograph me in your favorite city spot?
+What part of your city would remind you of my eyes?
+If we got lost in your city, would you enjoy wandering with me?
+What’s one small local tradition that would make me feel like I belong?
+Do lovers kiss differently in your city?
+Would we share secrets on a bench in your city’s oldest park?
+Could we write our names on a tree or a wall somewhere hidden?
+What’s one dish you'd feed me with your hands?
+Would you teach me how to love your city the way you do?
+If we had only one weekend together in your city, what would we do?
+Would your city ever feel like home to me if you were in it?
+What’s your favorite season in your city to fall in love?
+Could we stay in bed all day listening to the sounds outside your window?
+Is there a love song written in your native language you want me to hear?
+Would you sneak out with me at midnight just to watch the city sleep?
+Do you imagine growing old with me in your city?
+What’s one scent in your city that makes you think of love?
+Would you build a routine for us or chase adventure every day?
+What color is love in your city?
+Do you dream about me when you pass by romantic places?
+Would you want to propose somewhere local or somewhere secret?
+Is your city more about grand love or quiet gestures?
+What kind of flowers grow where you live, and which ones would you give me?
+Can you show me where the poets fell in love in your city?
+Would you walk me home or let me ride your bike with you?
+What would we argue about in your city and how would we make up?
+What’s one story from your past that only makes sense if I know your city?
+If I sent you a letter, where would you read it?
+Is your bed by a window? Can I watch the skyline while holding you?
+Would you let me sleep in your old room, or would we find our own place?
+What’s one thing in your city you think I’d hate, but you’d still want to share?
+Where do people in your city go to heal a broken heart?
+Would you take me to the ocean or the mountains if we needed to escape?
+Would you want our kids to grow up in your hometown?
+What’s the most magical street to walk on with fingers entwined?
+Have you ever written anyone a love letter from your city? Would you write me one?
+If your city were a lover, how is it different from me?
+What’s the one place where you’d want to kiss me for the first time?
+Is there a view that takes your breath away—and would you share it with me?
+Would you cry when I leave or pretend to be strong?
+Would you wait for me in your city if I had to go away?
+What’s the coldest day you’ve felt warm because of someone’s love?
+Would we eat breakfast together in silence or always talk endlessly?
+Would your city be jealous if I took you away?
+What’s the most beautiful thing you've never told anyone about your home?
+Can you hear my name echo in your streets when you miss me?
+Would we get matching tattoos in your city on a whim?
+What’s one romantic superstition locals believe?
+Could we celebrate love every day like a small ritual?
+What would we name our favorite corner of your city?
+Would you want our love to be quiet like your bookstores or loud like your festivals?
+What place would you want me to see first when I land?
+Could we pretend to be strangers and fall in love again on your streets?
+Would your city smile more if we were together in it?
+What’s the loneliest place in your city—can I fill it with my love?
+Would we nap in the park or stay up all night walking the boulevards?
+Do the trees in your city know your secrets?
+What would we toast to in a tiny bar no one else knows about?
+Do you believe cities can miss people?
+Would we make our own map with memories instead of directions?
+Would you introduce me to the people who shaped your heart?
+Could we fall in love again and again every day in your city?
+Would you stay in your city forever if I stayed with you?
+What’s the last thing you'd whisper to me before I leave your city?
