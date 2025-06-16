@@ -278,7 +278,7 @@ if persona_files:
                 
                 # Purple completion box with proper styling and spacing
                 st.markdown(
-                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">Bulk generation completed!</div>',
+                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
                     unsafe_allow_html=True
                 )
 
@@ -327,7 +327,7 @@ if persona_files:
                     
                 elif event["type"] == "bulk_completed": 
                     st.markdown(
-                        f'<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">{event["message"]}</div>',
+                        f'<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">{event["message"]}</div>',
                         unsafe_allow_html=True
                     )
                     st.markdown("---")
