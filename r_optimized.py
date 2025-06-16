@@ -20,6 +20,14 @@ from google import genai
 import os
 import glob
 
+import ast
+
+with open('mentor_questions.txt', 'r', encoding='utf-8') as f:
+    arr = ast.literal_eval(f.read())
+with open('mentor_questions.txt', 'w', encoding='utf-8') as f:
+    for q in arr:
+        f.write(q.strip() + '\n')
+
 # Initialize the Gemini LLM
 llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
 
