@@ -8,6 +8,7 @@ Original file is located at
 
 # !pip install llama-index-llms-google-genai 
 
+# -*- coding: utf-8 -*-
 import streamlit as st
 import time
 import pandas as pd
@@ -23,6 +24,7 @@ QUESTIONS_FOLDER = "Questions"
 USER_INFO_FILE = "user_info.txt"
 
 def load_user_info():
+    """Extract username and gender from user_info.txt"""
     username = "User"
     user_gender = "unknown"
     try:
@@ -62,6 +64,7 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         return f"Error: {str(e)}"
 
 def get_persona_files():
+    """Get all persona txt files from Personas folder"""
     persona_files = []
     patterns = ['*.txt']
     for pattern in patterns:
@@ -69,10 +72,12 @@ def get_persona_files():
     return persona_files
 
 def extract_relationship_from_filename(filename):
+    """Extract relationship from filename (e.g., 'male_mentor.txt' -> 'male mentor')"""
     base_name = os.path.basename(filename).replace('.txt', '')
     return base_name.replace('_', ' ')
 
 def extract_bot_details_from_content(content):
+    """Extract botname and origin from persona content"""
     botname = "Assistant"
     origin = "Unknown origin"
     lines = content.split('\n')
@@ -98,6 +103,7 @@ def extract_bot_details_from_content(content):
     return botname, origin
 
 def load_persona_content(filename):
+    """Load persona content from txt file"""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -107,6 +113,7 @@ def load_persona_content(filename):
         return ""
 
 def load_questions(relationship_type):
+    """Load questions based on relationship type from Questions folder"""
     question_file = os.path.join(QUESTIONS_FOLDER, f"{relationship_type}_questions.txt")
     try:
         with open(question_file, 'r', encoding='utf-8') as f:
@@ -117,23 +124,6 @@ def load_questions(relationship_type):
     except Exception as e:
         st.error(f"Error reading questions: {str(e)}")
         return []
-
-# Optional: Auto-convert array-format question files to plain text
-question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
-for fname in question_files:
-    file_path = f'./Questions/{fname}'
-    if os.path.exists(file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read().strip()
-        if content.startswith('[') and content.endswith(']'):
-            try:
-                arr = ast.literal_eval(content)
-                if isinstance(arr, list):
-                    with open(file_path, 'w', encoding='utf-8') as f2:
-                        for q in arr:
-                            f2.write(q.strip() + '\n')
-            except Exception:
-                pass
 
 # --- Streamlit session state initialization ---
 if "user_info_loaded" not in st.session_state:
@@ -155,15 +145,12 @@ defaults = {
     'user_questions': [],
     'show_resume': False,
     'persona_content': "",
-    'user_input': "",  # for text_input value
+    'user_input': "",
 }
+
 for key, val in defaults.items():
     if key not in st.session_state:
         st.session_state[key] = val
-
-# --- Single question input clear logic ---
-def clear_user_input():
-    st.session_state.user_input = ""
 
 # UI Elements
 persona_files = get_persona_files()
@@ -177,19 +164,19 @@ if persona_files:
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         st.session_state.questions = load_questions(relationship.split()[-1])
-        # Reset states when persona changes
+        # Reset only these states on persona change
         st.session_state.response_matrix = []
         st.session_state.csv_filename = None
         st.session_state.bulk_running = False
         st.session_state.paused = False
         st.session_state.current_question_index = 0
-        st.session_state.previous_conversation = ""
         st.session_state.user_questions = []
         st.session_state.show_resume = False
 
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
         
+        # Create persistent conversation context
         instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. Never mention AI development or technical details."
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         
@@ -200,24 +187,22 @@ if persona_files:
                 st.session_state.bulk_running = True
                 st.session_state.paused = False
                 st.session_state.current_question_index = 0
-                st.session_state.previous_conversation = ""
                 st.session_state.response_matrix = []
 
-        # Single Question Section (with Enter-to-send and input clear)
+        # Single Question Section
         with col2:
             user_question = st.text_input(
                 "Ask a single question:",
                 value=st.session_state.user_input,
-                key="user_input",
-                on_change=None
+                key="user_input"
             )
-            # Trigger on Ask button or Enter/Return
-            ask_clicked = st.button("Ask", key="ask_button")
-            if (ask_clicked or (user_question and st.session_state.user_input != "" and not ask_clicked)):
-                if user_question.strip() != "":
+            if st.button("Ask") or user_question:
+                if user_question.strip():
                     if st.session_state.bulk_running and not st.session_state.paused:
                         st.session_state.paused = True
                         st.session_state.show_resume = True
+                    
+                    # Process single question
                     response = call_gemini_local(
                         user_question,
                         st.session_state.previous_conversation,
@@ -227,20 +212,24 @@ if persona_files:
                         bot_prompt,
                         "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
                     )
+                    
+                    # Update conversation history
                     st.session_state.user_questions.append({
                         "question": user_question,
                         "answer": response,
                         "time": time.time()
                     })
                     st.session_state.previous_conversation += f"\n{user_question}\n{response}"
-                    st.session_state.user_input = ""  # clear input after send
-                    st.experimental_rerun()
+                    st.session_state.user_input = ""
+                    st.rerun()
 
         # Bulk Generation Logic
         if st.session_state.bulk_running and not st.session_state.paused:
             if st.session_state.current_question_index < len(st.session_state.questions):
                 progress = st.progress(st.session_state.current_question_index / len(st.session_state.questions))
                 question = st.session_state.questions[st.session_state.current_question_index]
+                
+                # Use shared conversation context
                 response = call_gemini_local(
                     question,
                     st.session_state.previous_conversation,
@@ -250,6 +239,8 @@ if persona_files:
                     bot_prompt,
                     "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
                 )
+                
+                # Update both response matrix and conversation history
                 st.session_state.response_matrix.append([
                     question, len(question), 0, response,
                     0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
@@ -275,28 +266,35 @@ if persona_files:
                 st.session_state.show_resume = False
                 st.rerun()
 
-        # Download Section
+        # Unified Download Section
         if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
             with open(st.session_state.csv_filename, "rb") as f:
                 st.download_button(
-                    label="Download CSV",
+                    label="Download Full Conversation CSV",
                     data=f,
                     file_name=os.path.basename(st.session_state.csv_filename),
-                    mime="text/csv",
-                    key="download_csv"
+                    mime="text/csv"
                 )
 
-        # Conversation History
-        if st.session_state.user_questions:
-            st.subheader("Conversation History")
-            for q in st.session_state.user_questions:
-                st.markdown(f"**You**: {q['question']}")
-                st.markdown(f"**{st.session_state.botname}**: {q['answer']}")
-                st.divider()
-
-    else:
-        if not st.session_state.questions:
-            st.error("No questions found for selected relationship type!")
+        # Combined Conversation History
+        st.subheader("Full Conversation History")
+        combined_history = []
+        
+        # Add bulk responses
+        for idx, item in enumerate(st.session_state.response_matrix):
+            combined_history.append({"type": "bulk", "question": item[0], "answer": item[3], "time": item[5]})
+        
+        # Add user questions
+        for item in st.session_state.user_questions:
+            combined_history.append({"type": "user", "question": item["question"], "answer": item["answer"], "time": item["time"]})
+        
+        # Sort by timestamp and display
+        combined_history.sort(key=lambda x: x["time"])
+        for item in combined_history:
+            st.markdown(f"**{item['question']}**")
+            st.markdown(f"{item['answer']}")
+            st.markdown(f"*Generated via {'bulk' if item['type'] == 'bulk' else 'interactive'} mode*")
+            st.divider()
 
 else:
     st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
