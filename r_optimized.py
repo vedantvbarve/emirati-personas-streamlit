@@ -312,13 +312,11 @@ if persona_files:
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
                     st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
-                    st.markdown("---")
-                    st.markdown("**(Bulk mode beginning)**")
-                    st.markdown("---")
+                    pass
                 elif event["type"] == "bulk_paused":
                     st.markdown("---")
                     st.info(event["message"])
-                    st.markdown("---")
+                    # st.markdown("---")
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
                     st.success("**Bulk generation resumed**")
