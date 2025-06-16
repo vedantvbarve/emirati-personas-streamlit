@@ -18,6 +18,7 @@ import json
 from llama_index.llms.google_genai import GoogleGenAI
 
 import pandas as pd
+import streamlit as st
 
 # Initialize the Gemini LLM with a specific model and API key
 llm = GoogleGenAI(model= "gemini-2.5-pro-preview-03-25", #"gemini-2.0-flash",
@@ -260,5 +261,12 @@ for question in mentor_questions:
 
 df = pd.DataFrame(response_matrix, columns = column_names)
 df.to_csv("test_female_mentor.csv")
-from google.colab import files
-files.download("test_female_mentor.csv")
+
+# After saving your CSV
+with open("test_female_mentor.csv", "rb") as f:
+    st.download_button(
+    label="Download CSV",
+    data=f,
+    file_name="test_female_mentor.csv",
+    mime="text/csv"
+)
