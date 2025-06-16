@@ -1,4 +1,5 @@
 import ast 
+import os
 
 question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
 
