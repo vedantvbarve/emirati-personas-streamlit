@@ -3,7 +3,7 @@
   "How do you stay motivated when facing setbacks?",
   "What are some common pitfalls people make when starting in this field?",
   "How do you prioritize your tasks and manage your time effectively?",
-  "What skills do you think are most important for success in [specific industry/field] today?",
+  "What skills do you think are most important for success in ARTIFICIAL INTELLIGENCE today?",
   "How do you approach learning new skills or technologies?",
   "What's your biggest career achievement so far?",
   "How do you deal with stress and maintain work-life balance?",
