@@ -202,16 +202,27 @@ if persona_files:
                     ])
                     csv_filename = f"{botname.replace(' ', '_').lower()}_{relationship.replace(' ', '_')}_persona_test.csv"
                     df.to_csv(csv_filename, index=False)
+                    st.session_state.csv_filename = csv_filename 
                     st.session_state.response_matrix = response_matrix
                     st.success("CSV generated!")
+
+        # After CSV is generated and saved to csv_filename:
+        if "csv_filename" in st.session_state and os.path.exists(st.session_state.csv_filename):
+            with open(st.session_state.csv_filename, "rb") as f:
+                st.download_button(
+                    label="Download CSV",
+                    data=f,
+                    file_name=os.path.basename(st.session_state.csv_filename),
+                    mime="text/csv"
+                ) 
                     
-                    with open(csv_filename, "rb") as f:
-                        st.download_button(
-                            label="Download CSV",
-                            data=f,
-                            file_name=csv_filename,
-                            mime="text/csv"
-                        )
+                    # with open(csv_filename, "rb") as f:
+                    #     st.download_button(
+                    #         label="Download CSV",
+                    #         data=f,
+                    #         file_name=csv_filename,
+                    #         mime="text/csv"
+                    #     )
             else:
                 st.error("Please select a persona first!")
     else:
