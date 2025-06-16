@@ -314,9 +314,9 @@ if persona_files:
                 elif event["type"] == "bulk_started":
                     pass
                 elif event["type"] == "bulk_paused":
-                    st.markdown("---")
-                    st.info(event["message"])
                     # st.markdown("---")
+                    st.info(event["message"])
+                    st.markdown("---")
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
                     st.success("**Bulk generation resumed**")
