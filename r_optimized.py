@@ -219,7 +219,7 @@ if persona_files:
                 st.session_state.response_matrix = []
                 st.session_state.conversation_events.append({
                     "type": "bulk_started",
-                    "message": "Bulk mode generation started",
+                    "message": "Bulk generation begins.",
                     "time": time.time()
                 })
 
@@ -237,10 +237,8 @@ if persona_files:
             total_questions = len(st.session_state.questions)
             progress_percentage = (st.session_state.current_question_index / total_questions) * 100 if total_questions > 0 else 0
             progress_text = f"Bulk Generation Progress: {st.session_state.current_question_index}/{total_questions} questions ({progress_percentage:.1f}%)"
-            
             if st.session_state.paused:
                 progress_text += " - PAUSED"
-            
             st.progress(progress_percentage / 100, text=progress_text)
 
         # Bulk Generation Logic
@@ -286,7 +284,7 @@ if persona_files:
                 st.session_state.show_resume = False
                 st.session_state.conversation_events.append({
                     "type": "bulk_resumed",
-                    "message": "Bulk generation resumed",
+                    "message": "Bulk generation resumed.",
                     "time": time.time()
                 })
                 st.rerun()
@@ -311,15 +309,21 @@ if persona_files:
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
                     st.markdown("")  # Spacing
+                    
                 elif event["type"] == "bulk_started":
-                    pass
-                elif event["type"] == "bulk_paused":
-                    # st.markdown("---")
-                    st.info(event["message"])
                     st.markdown("---")
+                    st.success(":green[Bulk generation begins.]")
+                    st.markdown("---")
+                    
+                elif event["type"] == "bulk_paused":
+                    st.markdown("---")
+                    st.info(event["message"])
+                    # st.markdown("---")
+                    
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
-                    st.success("**Bulk generation resumed**") 
+                    st.success(":green[Bulk generation resumed.]") 
+                    
                 elif event["type"] == "bulk_completed":
                     st.markdown("---")
                     st.success(event["message"])
