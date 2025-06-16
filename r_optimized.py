@@ -20,14 +20,34 @@ from google import genai
 import os
 import glob
 
-import ast
+import ast 
 
-for fname in ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']:
-    with open(f'./Questions/{fname}', 'r', encoding='utf-8') as f:
-        arr = ast.literal_eval(f.read())
-    with open(f'./Questions/{fname}', 'w', encoding='utf-8') as f:
-        for q in arr:
-            f.write(q.strip() + '\n')
+# Check and convert question files if needed
+question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
+
+for fname in question_files:
+    file_path = f'./Questions/{fname}'
+    
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+            
+            # Try to parse as Python array
+            try:
+                arr = ast.literal_eval(content)
+                if isinstance(arr, list):
+                    # It's array format - convert to plain text
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        for q in arr:
+                            f.write(q.strip() + '\n')
+            except (ValueError, SyntaxError):
+                # Failed to parse as array - assume already plain text format
+                pass
+                
+        except Exception:
+            # File read error - skip this file
+            pass
 
 # Initialize the Gemini LLM
 llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
