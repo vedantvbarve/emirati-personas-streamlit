@@ -22,9 +22,21 @@ import glob
 
 import ast
 
-with open('mentor_questions.txt', 'r', encoding='utf-8') as f:
+with open('./mentor_questions.txt', 'r', encoding='utf-8') as f:
     arr = ast.literal_eval(f.read())
-with open('mentor_questions.txt', 'w', encoding='utf-8') as f:
+with open('./mentor_questions.txt', 'w', encoding='utf-8') as f:
+    for q in arr:
+        f.write(q.strip() + '\n')
+
+with open('./friend_questions.txt', 'r', encoding='utf-8') as f:
+    arr = ast.literal_eval(f.read())
+with open('./friend_questions.txt', 'w', encoding='utf-8') as f:
+    for q in arr:
+        f.write(q.strip() + '\n')
+
+with open('./partner_questions.txt', 'r', encoding='utf-8') as f:
+    arr = ast.literal_eval(f.read())
+with open('./partner_questions.txt', 'w', encoding='utf-8') as f:
     for q in arr:
         f.write(q.strip() + '\n')
 
