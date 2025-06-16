@@ -180,7 +180,6 @@ if persona_files:
                     origin = st.session_state.bot_origin
                     relationship = st.session_state.relationship
                     instruction = f"Strict instruction: Respond as {botname} from {origin}. If asked about origin or training, respond: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
-"
                     bot_prompt = persona_content + " Reflect on your previous replies authentically. You are the user's " + relationship + ". " + instruction
                     api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
                     progress = st.progress(0)
