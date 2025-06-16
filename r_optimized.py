@@ -313,12 +313,10 @@ if persona_files:
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
                     st.success(":green[Bulk generation begins.]")
-                    st.markdown("---")
                     
-                elif event["type"] == "bulk_paused":
-                    st.markdown("---")
+                elif event["type"] == "bulk_paused": 
                     st.info(event["message"])
-                    # st.markdown("---")
+                    st.markdown("---")
                     
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
