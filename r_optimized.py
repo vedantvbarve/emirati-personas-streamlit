@@ -139,7 +139,6 @@ defaults = {
     'persona_content': "",
     'user_input': "",
     'conversation_events': [],
-    'last_user_answer': None
 }
 for key, val in defaults.items():
     if key not in st.session_state:
@@ -152,13 +151,11 @@ def process_user_question():
         if st.session_state.bulk_running and not st.session_state.paused:
             st.session_state.paused = True
             st.session_state.show_resume = True
-            # Add pause event
             st.session_state.conversation_events.append({
                 "type": "bulk_paused",
                 "message": f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.",
                 "time": time.time()
             })
-        
         instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. Never mention AI development or technical details. Only reply in English. Do not translate your answer into any other language."
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         response = call_gemini_local(
@@ -170,24 +167,18 @@ def process_user_question():
             bot_prompt,
             "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
         )
-        
-        # Add user question and response
         st.session_state.user_questions.append({
             "question": user_question,
             "answer": response,
             "time": time.time()
         })
         st.session_state.previous_conversation += f"\n{user_question}\n{response}"
-        st.session_state.last_user_answer = (user_question, response)
-        
-        # Add user conversation event
         st.session_state.conversation_events.append({
             "type": "user_qa",
             "question": user_question,
             "answer": response,
             "time": time.time()
         })
-        
     st.session_state.user_input = ""
 
 persona_files = get_persona_files()
@@ -201,7 +192,6 @@ if persona_files:
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         st.session_state.questions = load_questions(relationship.split()[-1])
-        # Reset states when persona changes
         st.session_state.response_matrix = []
         st.session_state.csv_filename = None
         st.session_state.bulk_running = False
@@ -212,7 +202,6 @@ if persona_files:
         st.session_state.previous_conversation = ""
         st.session_state.user_input = ""
         st.session_state.conversation_events = []
-        st.session_state.last_user_answer = None
 
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
@@ -228,7 +217,6 @@ if persona_files:
                 st.session_state.paused = False
                 st.session_state.current_question_index = 0
                 st.session_state.response_matrix = []
-                # Add bulk start event
                 st.session_state.conversation_events.append({
                     "type": "bulk_started",
                     "message": "Bulk mode generation started",
@@ -267,7 +255,6 @@ if persona_files:
                 st.rerun()
             else:
                 st.session_state.bulk_running = False
-                # Add bulk completed event
                 st.session_state.conversation_events.append({
                     "type": "bulk_completed",
                     "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.",
@@ -288,7 +275,6 @@ if persona_files:
             if st.button("Resume Bulk Generation"):
                 st.session_state.paused = False
                 st.session_state.show_resume = False
-                # Add resume event
                 st.session_state.conversation_events.append({
                     "type": "bulk_resumed",
                     "message": "Bulk generation resumed",
@@ -309,40 +295,27 @@ if persona_files:
                     key="download_csv"
                 )
 
-        # Latest Conversation (only most recent user Q&A)
-        if st.session_state.last_user_answer:
-            st.subheader("Latest Conversation")
-            st.markdown(f"**You**: {st.session_state.last_user_answer[0]}")
-            st.markdown(f"**{st.session_state.botname}**: {st.session_state.last_user_answer[1]}")
-
-        # Complete Conversation History - ALWAYS SHOW, even if empty
+        # Complete Conversation History - show all individual Q&A in order, with bulk mode events
         st.subheader("Complete Conversation History")
-        
         if st.session_state.conversation_events:
-            # Sort all events by time
             sorted_events = sorted(st.session_state.conversation_events, key=lambda x: x["time"])
-            
             for event in sorted_events:
                 if event["type"] == "user_qa":
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
-                    st.markdown("")  # Add spacing
-                
+                    st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
                     st.markdown("**(Bulk mode beginning)**")
                     st.markdown("---")
-                
                 elif event["type"] == "bulk_paused":
                     st.markdown("---")
                     st.info(event["message"])
                     st.markdown("---")
-                
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
                     st.success("**Bulk generation resumed**")
                     st.markdown("---")
-                
                 elif event["type"] == "bulk_completed":
                     st.markdown("---")
                     st.success(event["message"])
