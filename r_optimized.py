@@ -265,7 +265,7 @@ if persona_files:
                 st.session_state.bulk_running = False
                 st.session_state.conversation_events.append({
                     "type": "bulk_completed",
-                    "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.", 
+                    "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.",
                     "time": time.time()
                 })
                 df = pd.DataFrame(st.session_state.response_matrix, columns=[
@@ -275,8 +275,10 @@ if persona_files:
                 csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
                 df.to_csv(csv_filename, index=False)
                 st.session_state.csv_filename = csv_filename
-                # st.success("Bulk generation completed!")
-                st.markdown(f'<div style="background-color:#e0a9f7;padding:12px;border-radius:8px;color:white;font-weight:bold;">Bulk generation completed!</div>',
+                
+                # Purple completion box with proper styling and spacing
+                st.markdown(
+                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">✅ Bulk generation completed!</div>',
                     unsafe_allow_html=True
                 )
 
@@ -312,22 +314,20 @@ if persona_files:
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
                     st.markdown("")  # Spacing
-                    
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
                     st.success(":green[Bulk generation begins.]")
                     
-                elif event["type"] == "bulk_paused": 
+                elif event["type"] == "bulk_paused":
                     st.info(event["message"])
                     st.markdown("---")
-                    
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
-                    st.success(":green[Bulk generation resumed.]") 
+                    st.success(":green[Bulk generation resumed.]")
                     
                 elif event["type"] == "bulk_completed": 
                     st.markdown(
-                        f'<div style="background-color:#e0a9f7;padding:12px;border-radius:8px;color:white;font-weight:bold;">{event["message"]}</div>',
+                        f'<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: #6b2c91; font-weight: 500;">✅ {event["message"]}</div>',
                         unsafe_allow_html=True
                     )
                     st.markdown("---")
@@ -339,4 +339,4 @@ if persona_files:
             st.error("No questions found for selected relationship type!")
 
 else:
-    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
+    st.error(f"No personas files found in {PERSONAS_FOLDER} directory!")  
