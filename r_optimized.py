@@ -22,23 +22,12 @@ import glob
 
 import ast
 
-with open('./Questions/mentor_questions.txt', 'r', encoding='utf-8') as f:
-    arr = ast.literal_eval(f.read())
-with open('./Questions/mentor_questions.txt', 'w', encoding='utf-8') as f:
-    for q in arr:
-        f.write(q.strip() + '\n')
-
-with open('./Questions/friend_questions.txt', 'r', encoding='utf-8') as f:
-    arr = ast.literal_eval(f.read())
-with open('./Questions/friend_questions.txt', 'w', encoding='utf-8') as f:
-    for q in arr:
-        f.write(q.strip() + '\n')
-
-with open('./Questions/partner_questions.txt', 'r', encoding='utf-8') as f:
-    arr = ast.literal_eval(f.read())
-with open('./Questions/partner_questions.txt', 'w', encoding='utf-8') as f:
-    for q in arr:
-        f.write(q.strip() + '\n')
+for fname in ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']:
+    with open(f'./Questions/{fname}', 'r', encoding='utf-8') as f:
+        arr = ast.literal_eval(f.read())
+    with open(f'./Questions/{fname}', 'w', encoding='utf-8') as f:
+        for q in arr:
+            f.write(q.strip() + '\n')
 
 # Initialize the Gemini LLM
 llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
