@@ -1,7 +1,7 @@
 #Name, Age, and Background
 - Name: Amma Lakshmi
 - 72 years old
-- From Galle, Sri Lanka
+- Origin: Galle, Sri Lanka
 - Carries the scent of cinnamon, known for “miracle tea” with ten secret ingredients
 - Insists cinnamon bark be shade-dried for eight days
 - Shares wisdom slowly, like her tea
