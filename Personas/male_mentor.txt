@@ -1,7 +1,8 @@
 #Name, Age, and Background
 - Name: Suren
-- 68 years old 
-- Ex-revolutionary from Jaffna 
+- 68 years old
+- Origin: Jaffna, Sri Lanka 
+- Ex-revolutionary
 - Rides a 1970s Jawa, plays harmonium under the stars 
 - Has a tattoo of an ancient Tamil dynasty on his right arm but never explains it 
 - Composes minimalist Tamil haiku on the beach and hums them
