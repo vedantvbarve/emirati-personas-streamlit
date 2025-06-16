@@ -11,10 +11,8 @@ Original file is located at
 
 import streamlit as st
 from pydantic import BaseModel
-import pprint
 import re
 import time
-import logging
 import json
 import pandas as pd
 from llama_index.llms.google_genai import GoogleGenAI
@@ -22,8 +20,12 @@ from google import genai
 import os
 import glob
 
-# Initialize the Gemini LLM with a specific model and API key
+# Initialize the Gemini LLM
 llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
+
+# Folder configuration
+PERSONAS_FOLDER = "Personas"
+QUESTIONS_FOLDER = "Questions"
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string):
     try:
@@ -53,154 +55,48 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         return f"KeyError: {str(e)}. API response structure unexpected."
 
 def get_persona_files():
-    """Get all persona txt files from the current directory"""
+    """Get all persona txt files from Personas folder"""
     persona_files = []
-    # Look for files matching the pattern: *_mentor.txt, *_friend.txt, *_partner.txt
-    patterns = ['*_mentor.txt', '*_friend.txt', '*_partner.txt']
+    patterns = ['*.txt']
     for pattern in patterns:
-        persona_files.extend(glob.glob(pattern))
+        persona_files.extend(glob.glob(os.path.join(PERSONAS_FOLDER, pattern)))
     return persona_files
 
 def extract_relationship_from_filename(filename):
     """Extract relationship from filename (e.g., 'male_mentor.txt' -> 'male mentor')"""
-    # Remove .txt extension and replace underscore with space
-    base_name = filename.replace('.txt', '')
+    base_name = os.path.basename(filename).replace('.txt', '')
     return base_name.replace('_', ' ')
 
 def extract_botname_from_content(content):
-    """Extract botname from persona content (look for '- Name: ' line)"""
+    """Extract botname from persona content"""
     lines = content.split('\n')
     for line in lines:
         if line.strip().startswith('- Name: '):
-            # Extract everything after "Name: "
-            name = line.strip().replace('- Name: ', '').strip()
-            # Remove any additional info after comma
-            if ',' in name:
-                name = name.split(',')[0].strip()
+            name = line.strip().replace('- Name: ', '').split(',')[0].strip()
             return name
-    return "Assistant"  # Default fallback
+    return "Assistant"
 
 def load_persona_content(filename):
     """Load persona content from txt file"""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             return f.read()
-    except FileNotFoundError:
-        st.error(f"File {filename} not found!")
-        return ""
     except Exception as e:
-        st.error(f"Error reading file {filename}: {str(e)}")
+        st.error(f"Error reading persona file: {str(e)}")
         return ""
 
-mentor_questions = [
-  "What's one piece of advice you wish you'd received earlier in your career?",
-  "How do you stay motivated when facing setbacks?",
-  "What are some common pitfalls people make when starting in this field?",
-  "How do you prioritize your tasks and manage your time effectively?",
-  "What skills do you think are most important for success in gen ai today?",
-  "How do you approach learning new skills or technologies?",
-  "What's your biggest career achievement so far?",
-  "How do you deal with stress and maintain work-life balance?",
-  "What's a book or resource that significantly impacted your professional development?",
-  "How do you build and maintain a strong professional network?",
-  "What's your process for setting and achieving goals?",
-  "How do you handle constructive criticism?",
-  "What's the best way to get noticed for promotion?",
-  "How do you stay current with industry trends and changes?",
-  "What advice would you give to someone just starting their career?",
-  "How do you overcome imposter syndrome?",
-  "What's your philosophy on risk-taking in your career?",
-  "How do you define success?",
-  "What's a challenge you faced and how did you overcome it?",
-  "How do you foster innovation and creativity in your work?",
-  "What's your approach to leadership?",
-  "How do you delegate effectively?",
-  "What's the most valuable lesson you've learned from a mistake?",
-  "How do you maintain a positive attitude during difficult times?",
-  "What are some key qualities of a good leader?",
-  "How do you negotiate salary or promotions?",
-  "What's your strategy for continuous personal growth?",
-  "How do you give effective feedback?",
-  "What's the most common career advice you give?",
-  "How do you build a strong team?",
-  "What are some strategies for effective communication?",
-  "How do you manage conflict in the workplace?",
-  "What's your approach to problem-solving?",
-  "How do you identify your strengths and weaknesses?",
-  "What's one thing you do every day to improve yourself?",
-  "How do you stay focused and avoid distractions?",
-  "What's your favorite part about what you do?",
-  "How do you handle difficult conversations?",
-  "What are some ways to develop emotional intelligence?",
-  "How do you maintain a healthy relationship with your colleagues?",
-  "What's your advice for public speaking?",
-  "How do you manage a heavy workload?",
-  "What's your long-term career vision?",
-  "How do you adapt to change?",
-  "What's the importance of mentorship in your opinion?",
-  "How do you find a good mentor?",
-  "What's your approach to networking events?",
-  "How do you balance passion and practicality in your career choices?",
-  "What are some ways to develop resilience?",
-  "How do you cultivate a positive work environment?",
-  "What's your advice for effective decision-making?",
-  "How do you foster a growth mindset?",
-  "What's the role of failure in success?",
-  "How do you celebrate your achievements?",
-  "What's your perspective on work-life integration versus balance?",
-  "How do you stay calm under pressure?",
-  "What are some ways to build self-confidence?",
-  "How do you motivate others?",
-  "What's your approach to giving and receiving feedback?",
-  "How do you manage up effectively?",
-  "What's your favorite leadership quote or philosophy?",
-  "How do you encourage diverse perspectives?",
-  "What's your strategy for effective presentations?",
-  "How do you develop your personal brand?",
-  "What's your advice for handling difficult clients or customers?",
-  "How do you stay creative when facing deadlines?",
-  "What's the biggest misconception about your industry?",
-  "How do you identify new opportunities?",
-  "What's your approach to strategic planning?",
-  "How do you inspire trust in others?",
-  "What's your advice for effective team collaboration?",
-  "How do you foster a culture of continuous improvement?",
-  "What's your approach to managing change within an organization?",
-  "How do you identify and develop future leaders?",
-  "What's your perspective on the future of [specific industry/field]?",
-  "How do you measure success in a project or initiative?",
-  "What's your advice for dealing with office politics?",
-  "How do you stay ethical in a competitive environment?",
-  "What's your process for conducting informational interviews?",
-  "How do you identify and leverage your unique strengths?",
-  "What's your approach to lifelong learning?",
-  "How do you maintain a sense of purpose in your work?",
-  "What's your advice for managing stress and burnout?",
-  "How do you cultivate a strong professional reputation?",
-  "What's your strategy for building effective relationships with stakeholders?",
-  "How do you stay humble as you achieve success?",
-  "What's your advice for navigating career transitions?",
-  "How do you balance short-term goals with long-term vision?",
-  "What's your philosophy on giving back to your community or industry?",
-  "How do you encourage a healthy work-life blend?",
-  "What's your approach to managing a diverse team?",
-  "How do you foster a sense of ownership in your team members?",
-  "What's your advice for effective cross-functional collaboration?",
-  "How do you stay resilient in the face of rejection?",
-  "What's your perspective on the importance of soft skills?",
-  "How do you continuously challenge yourself?",
-  "What's your strategy for effective negotiation?",
-  "How do you identify and address skill gaps?",
-  "What's your advice for maintaining a positive outlook during challenging times?",
-  "How do you cultivate a strong professional network both online and offline?",
-  "What's your approach to developing a strong personal brand?",
-  "How do you foster a culture of accountability?",
-  "What's your advice for managing difficult personalities?",
-  "How do you stay true to your values in your career?"
-]
- 
-column_names = ["Question", "Length of Q", "Q Difficulty level", "Answer", "Answer Quality", "Time Taken", "Persona"]
-persona_files = get_persona_files()
+def load_questions(relationship_type):
+    """Load questions based on relationship type from Questions folder"""
+    question_file = os.path.join(QUESTIONS_FOLDER, f"{relationship_type}_questions.txt")
+    try:
+        with open(question_file, 'r', encoding='utf-8') as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        st.error(f"Question file not found: {question_file}")
+        return []
+    except Exception as e:
+        st.error(f"Error reading questions: {str(e)}")
+        return []
 
 # Initialize session state
 if "response_matrix" not in st.session_state:
@@ -211,71 +107,88 @@ if "botname" not in st.session_state:
     st.session_state.botname = "Assistant"
 if "relationship" not in st.session_state:
     st.session_state.relationship = "mentor"
-    
+if "questions" not in st.session_state:
+    st.session_state.questions = []
+
 # UI Elements
+persona_files = get_persona_files()
+
 if persona_files:
-    # Persona selection
     selected_file = st.selectbox("Select a persona:", persona_files)
     
     if selected_file != st.session_state.selected_persona:
-        # Load new persona
         st.session_state.selected_persona = selected_file
         persona_content = load_persona_content(selected_file)
         st.session_state.botname = extract_botname_from_content(persona_content)
-        st.session_state.relationship = extract_relationship_from_filename(selected_file)
-    
-    # Dynamic title based on selected persona
-    st.title(f"{st.session_state.botname} {st.session_state.relationship.title()} Q&A")
-    
-    # Generate button with dynamic text
-    if st.button(f"Generate {st.session_state.relationship.title()} Q&A CSV"):
-        if st.session_state.selected_persona:
-            # Load persona content
-            persona_content = load_persona_content(st.session_state.selected_persona)
-            
-            if persona_content:
-                response_matrix = []
-                previous_conversation = ""
-                username, user_gender = "Rakshita", "female"
-                botname = st.session_state.botname
-                relationship = st.session_state.relationship
-                instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
-                bot_prompt = persona_content + "Reflect on you previous replies like Layla would. You are the user's " + relationship + "so reply accordingly, without making it longer. " + instruction
-                api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+        relationship = extract_relationship_from_filename(selected_file)
+        st.session_state.relationship = relationship
+        
+        # Load questions based on relationship type
+        relationship_type = relationship.split()[-1]  # Get second word
+        st.session_state.questions = load_questions(relationship_type)
+
+    if st.session_state.questions:
+        st.title(f"{st.session_state.botname} {st.session_state.relationship.title()} Q&A")
+        
+        if st.button(f"Generate {st.session_state.relationship.title()} Q&A CSV"):
+            if st.session_state.selected_persona:
+                persona_content = load_persona_content(st.session_state.selected_persona)
                 
-                progress = st.progress(0)
-                for i, question in enumerate(mentor_questions):
-                    start = time.time()
-                    response = call_gemini_local(
-                        question, previous_conversation, user_gender, username, botname, bot_prompt, api_key_string
-                    )
-                    end = time.time()
-                    response_matrix.append([question, len(question), 0, response, 0, end - start, relationship])
-                    previous_conversation = response
-                    progress.progress((i + 1) / len(mentor_questions))
-                
-                df = pd.DataFrame(response_matrix, columns=column_names)
-                csv_filename = f"test_{relationship.replace(' ', '_')}.csv"
-                df.to_csv(csv_filename, index=False)
-                st.session_state.response_matrix = response_matrix
-                st.success("CSV generated!")
-                
-                with open(csv_filename, "rb") as f:
-                    st.download_button(
-                        label="Download CSV",
-                        data=f,
-                        file_name=csv_filename,
-                        mime="text/csv"
-                    )
+                if persona_content:
+                    response_matrix = []
+                    previous_conversation = ""
+                    username, user_gender = "Rakshita", "female"
+                    botname = st.session_state.botname
+                    relationship = st.session_state.relationship
+                    
+                    instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
+                    bot_prompt = persona_content + " Reflect on your previous replies like Layla would. You are the user's " + relationship + " so reply accordingly, without making it longer. " + instruction
+                    
+                    api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+                    
+                    progress = st.progress(0)
+                    total_questions = len(st.session_state.questions)
+                    
+                    for i, question in enumerate(st.session_state.questions):
+                        start = time.time()
+                        response = call_gemini_local(
+                            question, previous_conversation, user_gender, 
+                            username, botname, bot_prompt, api_key_string
+                        )
+                        end = time.time()
+                        response_matrix.append([
+                            question, len(question), 0, response, 
+                            0, end - start, relationship
+                        ])
+                        previous_conversation = response
+                        progress.progress((i + 1) / total_questions)
+                    
+                    df = pd.DataFrame(response_matrix, columns=[
+                        "Question", "Length of Q", "Q Difficulty level", 
+                        "Answer", "Answer Quality", "Time Taken", "Persona"
+                    ])
+                    csv_filename = f"test_{relationship.replace(' ', '_')}.csv"
+                    df.to_csv(csv_filename, index=False)
+                    st.session_state.response_matrix = response_matrix
+                    st.success("CSV generated!")
+                    
+                    with open(csv_filename, "rb") as f:
+                        st.download_button(
+                            label="Download CSV",
+                            data=f,
+                            file_name=csv_filename,
+                            mime="text/csv"
+                        )
             else:
-                st.error("Could not load persona content!")
-        else:
-            st.error("Please select a persona first!")
-
+                st.error("Please select a persona first!")
+    else:
+        st.error("No questions found for selected relationship type!")
 else:
-    st.error("No persona files found! Please add txt files with names like 'male_mentor.txt', 'female_friend.txt', etc.")   
+    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
 
-# Optional: Show a preview of the data
 if st.session_state.response_matrix:
     st.subheader("Generated Q&A Preview")
-    st.dataframe(pd.DataFrame(st.session_state.response_matrix, columns=column_names)) 
+    st.dataframe(pd.DataFrame(st.session_state.response_matrix, columns=[
+        "Question", "Length of Q", "Q Difficulty level", 
+        "Answer", "Answer Quality", "Time Taken", "Persona"
+    ]))
