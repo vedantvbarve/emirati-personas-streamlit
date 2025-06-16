@@ -306,14 +306,12 @@ if persona_files:
                     st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started": 
                     pass
-                elif event["type"] == "bulk_paused":
-                    st.markdown("---")
+                elif event["type"] == "bulk_paused": 
                     st.info(event["message"])
                     st.markdown("---")
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
-                    st.success("**Bulk generation resumed**")
-                    st.markdown("---")
+                    st.success("**Bulk generation resumed**") 
                 elif event["type"] == "bulk_completed":
                     st.markdown("---")
                     st.success(event["message"])
