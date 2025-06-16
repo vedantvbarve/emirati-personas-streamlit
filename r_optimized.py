@@ -20,7 +20,8 @@ from google import genai
 import os
 import glob
 
-import ast 
+import ast
+import os
 
 # Check and convert question files if needed
 question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
@@ -38,7 +39,7 @@ for fname in question_files:
                 arr = ast.literal_eval(content)
                 if isinstance(arr, list):
                     # It's array format - convert to plain text
-                    with open(file_path, 'w', encoding='utf-8') as f:
+                    with open(file_path, 'w', encoding='utf-8') as f:  # ← OVERWRITES THE SAME FILE
                         for q in arr:
                             f.write(q.strip() + '\n')
             except (ValueError, SyntaxError):
