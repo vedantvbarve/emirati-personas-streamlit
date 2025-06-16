@@ -82,7 +82,7 @@ def extract_relationship_from_filename(filename):
 
 def extract_bot_details_from_content(content):
     """Extract botname and origin from persona content"""
-    botname = "Assistant"
+    botname = "Unknown Person"
     origin = "Unknown origin"
     lines = content.split('\n')
     for line in lines:
@@ -141,7 +141,7 @@ if "response_matrix" not in st.session_state:
 if "selected_persona" not in st.session_state:
     st.session_state.selected_persona = None
 if "botname" not in st.session_state:
-    st.session_state.botname = "Assistant"
+    st.session_state.botname = "Unknown Person"
 if "bot_origin" not in st.session_state:
     st.session_state.bot_origin = "Unknown origin"
 if "relationship" not in st.session_state:
