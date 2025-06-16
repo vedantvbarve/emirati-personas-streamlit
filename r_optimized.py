@@ -200,7 +200,7 @@ if persona_files:
                         "Question", "Length of Q", "Q Difficulty level", 
                         "Answer", "Answer Quality", "Time Taken", "Persona"
                     ])
-                    csv_filename = f"{botname.replace(' ', '_')}_{relationship.replace(' ', '_')}_qna.csv"
+                    csv_filename = f"{botname.replace(' ', '_').lower()}_{relationship.replace(' ', '_')}_persona_test.csv"
                     df.to_csv(csv_filename, index=False)
                     st.session_state.response_matrix = response_matrix
                     st.success("CSV generated!")
