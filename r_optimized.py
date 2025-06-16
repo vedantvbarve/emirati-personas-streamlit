@@ -18,10 +18,29 @@ from llama_index.llms.google_genai import GoogleGenAI
 from google import genai
 import os
 import glob
+import ast
 
 # Folder configuration
 PERSONAS_FOLDER = "Personas"
 QUESTIONS_FOLDER = "Questions"
+USER_INFO_FILE = "user_info.txt"  # User info file at repo root
+
+def load_user_info():
+    """Extract username and gender from user_info.txt"""
+    username = "User"
+    user_gender = "unknown"
+    try:
+        with open(USER_INFO_FILE, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        for line in lines:
+            line = line.strip()
+            if line.lower().startswith('name:'):
+                username = line.split(':', 1)[1].strip()
+            elif line.lower().startswith('gender:'):
+                user_gender = line.split(':', 1)[1].strip().lower()
+    except Exception:
+        pass  # Fallback to defaults if file not found
+    return username, user_gender
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string):
     try:
@@ -111,26 +130,12 @@ def load_questions(relationship_type):
     except Exception as e:
         st.error(f"Error reading questions: {str(e)}")
         return []
-
-# --- Optional: Auto-convert array-format question files to plain text ---
-import ast
-question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
-for fname in question_files:
-    file_path = f'./Questions/{fname}'
-    if os.path.exists(file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read().strip()
-        if content.startswith('[') and content.endswith(']'):
-            try:
-                arr = ast.literal_eval(content)
-                if isinstance(arr, list):
-                    with open(file_path, 'w', encoding='utf-8') as f2:
-                        for q in arr:
-                            f2.write(q.strip() + '\n')
-            except Exception:
-                pass
-
+        
 # --- Streamlit session state initialization ---
+if "user_info_loaded" not in st.session_state:
+    st.session_state.username, st.session_state.user_gender = load_user_info()
+    st.session_state.user_info_loaded = True
+
 if "response_matrix" not in st.session_state:
     st.session_state.response_matrix = []
 if "selected_persona" not in st.session_state:
@@ -143,6 +148,8 @@ if "relationship" not in st.session_state:
     st.session_state.relationship = "mentor"
 if "questions" not in st.session_state:
     st.session_state.questions = []
+if "csv_filename" not in st.session_state:
+    st.session_state.csv_filename = None
 
 persona_files = get_persona_files()
 
@@ -166,7 +173,9 @@ if persona_files:
                 if persona_content:
                     response_matrix = []
                     previous_conversation = ""
-                    username, user_gender = "Rakshita", "female"
+                    # Use user info from session state
+                    username = st.session_state.username
+                    user_gender = st.session_state.user_gender
                     botname = st.session_state.botname
                     origin = st.session_state.bot_origin
                     relationship = st.session_state.relationship
@@ -199,14 +208,15 @@ if persona_files:
                     st.success("CSV generated!")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Persistent download button always visible if CSV exists
-if "csv_filename" in st.session_state and os.path.exists(st.session_state.csv_filename):
+# Persistent download button (always shows if CSV exists)
+if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
     with open(st.session_state.csv_filename, "rb") as f:
         st.download_button(
             label="Download CSV",
             data=f,
             file_name=os.path.basename(st.session_state.csv_filename),
-            mime="text/csv"
+            mime="text/csv",
+            key="persistent_download"
         )
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
