@@ -6,7 +6,7 @@ Original file is located at
     https://colab.research.google.com/drive/15bLkrgQW-nSRvDS5x_Xl04kduyMlfT8O
 """
 
-# !pip install llama-index-llms-google-genai
+# !pip install llama-index-llms-google-
 
 import streamlit as st
 import time
@@ -232,10 +232,20 @@ if persona_files:
                 on_change=process_user_question
             )
 
+        # Progress Bar Section (persistent during bulk generation)
+        if st.session_state.bulk_running or st.session_state.paused:
+            total_questions = len(st.session_state.questions)
+            progress_percentage = (st.session_state.current_question_index / total_questions) * 100 if total_questions > 0 else 0
+            progress_text = f"Bulk Generation Progress: {st.session_state.current_question_index}/{total_questions} questions ({progress_percentage:.1f}%)"
+            
+            if st.session_state.paused:
+                progress_text += " - PAUSED"
+            
+            st.progress(progress_percentage / 100, text=progress_text)
+
         # Bulk Generation Logic
         if st.session_state.bulk_running and not st.session_state.paused:
             if st.session_state.current_question_index < len(st.session_state.questions):
-                progress = st.progress(st.session_state.current_question_index / len(st.session_state.questions))
                 question = st.session_state.questions[st.session_state.current_question_index]
                 response = call_gemini_local(
                     question,
@@ -271,7 +281,6 @@ if persona_files:
 
         # Resume Logic
         if st.session_state.paused and st.session_state.show_resume:
-            st.info(f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.")
             if st.button("Resume Bulk Generation"):
                 st.session_state.paused = False
                 st.session_state.show_resume = False
@@ -281,8 +290,6 @@ if persona_files:
                     "time": time.time()
                 })
                 st.rerun()
-        elif st.session_state.bulk_running:
-            st.info(f"{st.session_state.current_question_index} questions answered in bulk mode.")
 
         # Download Section
         if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
@@ -304,14 +311,18 @@ if persona_files:
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
                     st.markdown("")  # Spacing
-                elif event["type"] == "bulk_started": 
-                    pass
-                elif event["type"] == "bulk_paused": 
+                elif event["type"] == "bulk_started":
+                    st.markdown("---")
+                    st.markdown("**(Bulk mode beginning)**")
+                    st.markdown("---")
+                elif event["type"] == "bulk_paused":
+                    st.markdown("---")
                     st.info(event["message"])
                     st.markdown("---")
                 elif event["type"] == "bulk_resumed":
                     st.markdown("---")
-                    st.success("**Bulk generation resumed**") 
+                    st.success("**Bulk generation resumed**")
+                    st.markdown("---")
                 elif event["type"] == "bulk_completed":
                     st.markdown("---")
                     st.success(event["message"])
