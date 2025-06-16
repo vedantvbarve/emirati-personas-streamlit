@@ -265,7 +265,7 @@ if persona_files:
                 st.session_state.bulk_running = False
                 st.session_state.conversation_events.append({
                     "type": "bulk_completed",
-                    "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.",
+                    "message": f":purple[Bulk generation completed! {len(st.session_state.questions)} questions processed.]",
                     "time": time.time()
                 })
                 df = pd.DataFrame(st.session_state.response_matrix, columns=[
