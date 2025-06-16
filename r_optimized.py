@@ -10,7 +10,6 @@ Original file is located at
 # !pip install llama-index-llms-google-genai 
 
 import streamlit as st
-from pydantic import BaseModel
 import re
 import time
 import json
@@ -19,9 +18,6 @@ from llama_index.llms.google_genai import GoogleGenAI
 from google import genai
 import os
 import glob
-                
-# Initialize the Gemini LLM
-llm = GoogleGenAI(model="gemini-2.5-pro-preview-03-25", api_key="AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o")
 
 # Folder configuration
 PERSONAS_FOLDER = "Personas"
@@ -35,7 +31,6 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
             f"{username}: {query}\n"
             f"{botname}:"
         )
-        
         client = genai.Client(api_key=llm_api_key_string)
         response_text = ""
         for chunk in client.models.generate_content_stream(
@@ -44,7 +39,6 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         ):
             if chunk.text:
                 response_text += chunk.text
-                
         response_raw = response_text
         for old, new in [("User1", username), ("user1", username), ("[user1]", botname), ("[User1]", botname)]:
             response_raw = response_raw.replace(old, new)
@@ -71,14 +65,10 @@ def extract_bot_details_from_content(content):
     """Extract botname and origin from persona content"""
     botname = "Assistant"
     origin = "Unknown origin"
-    
-    # Debug: Show first few lines of content
-    lines = content.split('\n') 
-    
+    lines = content.split('\n')
     for line in lines:
         line = line.strip()
-        
-        # Look for name with multiple possible formats
+        # Name extraction
         if line.startswith('- Name: '):
             name_part = line.replace('- Name: ', '', 1)
             botname = name_part.split(',')[0].strip()
@@ -86,29 +76,24 @@ def extract_bot_details_from_content(content):
             name_part = line.replace('Name: ', '', 1)
             botname = name_part.split(',')[0].strip()
         elif 'Name:' in line:
-            # More flexible name extraction
             name_part = line.split('Name:')[1].strip()
             botname = name_part.split(',')[0].strip()
-        
-        # Look for origin with multiple possible formats
+        # Origin extraction
         if line.startswith('Origin: '):
             origin = line.replace('Origin: ', '', 1).strip()
         elif line.startswith('- Origin: '):
             origin = line.replace('- Origin: ', '', 1).strip()
         elif 'Origin:' in line:
-            # More flexible origin extraction
             origin = line.split('Origin:')[1].strip()
         elif line.startswith('From '):
-            # Alternative format: "From Galle, Sri Lanka"
-            origin = line.replace('From ', '', 1).strip() 
-    
+            origin = line.replace('From ', '', 1).strip()
     return botname, origin
 
 def load_persona_content(filename):
     """Load persona content from txt file"""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
-            content = f.read() 
+            content = f.read()
         return content
     except Exception as e:
         st.error(f"Error reading persona file: {str(e)}")
@@ -119,8 +104,7 @@ def load_questions(relationship_type):
     question_file = os.path.join(QUESTIONS_FOLDER, f"{relationship_type}_questions.txt")
     try:
         with open(question_file, 'r', encoding='utf-8') as f:
-            questions = [line.strip() for line in f if line.strip()] 
-        return questions
+            return [line.strip() for line in f if line.strip()]
     except FileNotFoundError:
         st.error(f"Question file not found: {question_file}")
         return []
@@ -128,7 +112,25 @@ def load_questions(relationship_type):
         st.error(f"Error reading questions: {str(e)}")
         return []
 
-# Initialize session state
+# --- Optional: Auto-convert array-format question files to plain text ---
+import ast
+question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
+for fname in question_files:
+    file_path = f'./Questions/{fname}'
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+        if content.startswith('[') and content.endswith(']'):
+            try:
+                arr = ast.literal_eval(content)
+                if isinstance(arr, list):
+                    with open(file_path, 'w', encoding='utf-8') as f2:
+                        for q in arr:
+                            f2.write(q.strip() + '\n')
+            except Exception:
+                pass
+
+# --- Streamlit session state initialization ---
 if "response_matrix" not in st.session_state:
     st.session_state.response_matrix = []
 if "selected_persona" not in st.session_state:
@@ -142,30 +144,25 @@ if "relationship" not in st.session_state:
 if "questions" not in st.session_state:
     st.session_state.questions = []
 
-# UI Elements
 persona_files = get_persona_files()
 
 if persona_files:
     selected_file = st.selectbox("Select a persona:", persona_files)
-    
     if selected_file != st.session_state.selected_persona:
         st.session_state.selected_persona = selected_file
         persona_content = load_persona_content(selected_file)
         st.session_state.botname, st.session_state.bot_origin = extract_bot_details_from_content(persona_content)
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
-        
         # Load questions based on relationship type
         relationship_type = relationship.split()[-1]  # Get second word
         st.session_state.questions = load_questions(relationship_type)
 
     if st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
-        
         if st.button(f"Generate {st.session_state.relationship.title()} Q&A CSV"):
             if st.session_state.selected_persona:
                 persona_content = load_persona_content(st.session_state.selected_persona)
-                
                 if persona_content:
                     response_matrix = []
                     previous_conversation = ""
@@ -173,15 +170,11 @@ if persona_files:
                     botname = st.session_state.botname
                     origin = st.session_state.bot_origin
                     relationship = st.session_state.relationship
-                    
                     instruction = f"Strict instruction: Respond as {botname} from {origin}. Never mention AI development or technical details."
                     bot_prompt = persona_content + " Reflect on your previous replies authentically. You are the user's " + relationship + ". " + instruction
-                    
                     api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
-                    
                     progress = st.progress(0)
                     total_questions = len(st.session_state.questions)
-                    
                     for i, question in enumerate(st.session_state.questions):
                         start = time.time()
                         response = call_gemini_local(
@@ -195,26 +188,28 @@ if persona_files:
                         ])
                         previous_conversation = response
                         progress.progress((i + 1) / total_questions)
-                    
                     df = pd.DataFrame(response_matrix, columns=[
                         "Question", "Length of Q", "Q Difficulty level", 
                         "Answer", "Answer Quality", "Time Taken", "Persona"
                     ])
                     csv_filename = f"{botname.replace(' ', '_').lower()}_{relationship.replace(' ', '_')}_persona_test.csv"
                     df.to_csv(csv_filename, index=False)
-                    st.session_state.csv_filename = csv_filename 
                     st.session_state.response_matrix = response_matrix
-                    st.success("CSV generated!") 
-                    
-                    with open(csv_filename, "rb") as f:
-                        st.download_button(
-                            label="Download CSV",
-                            data=f,
-                            file_name=csv_filename,
-                            mime="text/csv"
-                        )
-            else:
-                st.error("Please select a persona first!")
+                    st.session_state.csv_filename = csv_filename
+                    st.success("CSV generated!")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Persistent download button always visible if CSV exists
+if "csv_filename" in st.session_state and os.path.exists(st.session_state.csv_filename):
+    with open(st.session_state.csv_filename, "rb") as f:
+        st.download_button(
+            label="Download CSV",
+            data=f,
+            file_name=os.path.basename(st.session_state.csv_filename),
+            mime="text/csv"
+        )
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     else:
         st.error("No questions found for selected relationship type!")
 else:
