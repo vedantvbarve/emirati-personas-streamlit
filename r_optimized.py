@@ -67,14 +67,21 @@ def extract_relationship_from_filename(filename):
     base_name = os.path.basename(filename).replace('.txt', '')
     return base_name.replace('_', ' ')
 
-def extract_botname_from_content(content):
-    """Extract botname from persona content"""
+def extract_bot_details_from_content(content):
+    """Extract botname and origin from persona content"""
+    botname = "Assistant"
+    origin = "Unknown origin"
+    
     lines = content.split('\n')
     for line in lines:
-        if line.strip().startswith('- Name: '):
-            name = line.strip().replace('- Name: ', '').split(',')[0].strip()
-            return name
-    return "Assistant"
+        line = line.strip()
+        if line.startswith('- Name: '):
+            name_part = line.replace('- Name: ', '', 1)
+            botname = name_part.split(',')[0].strip()
+        elif line.startswith('Origin: '):
+            origin = line.replace('Origin: ', '', 1).strip()
+    
+    return botname, origin
 
 def load_persona_content(filename):
     """Load persona content from txt file"""
@@ -105,6 +112,8 @@ if "selected_persona" not in st.session_state:
     st.session_state.selected_persona = None
 if "botname" not in st.session_state:
     st.session_state.botname = "Assistant"
+if "bot_origin" not in st.session_state:
+    st.session_state.bot_origin = "Unknown origin"
 if "relationship" not in st.session_state:
     st.session_state.relationship = "mentor"
 if "questions" not in st.session_state:
@@ -119,7 +128,7 @@ if persona_files:
     if selected_file != st.session_state.selected_persona:
         st.session_state.selected_persona = selected_file
         persona_content = load_persona_content(selected_file)
-        st.session_state.botname = extract_botname_from_content(persona_content)
+        st.session_state.botname, st.session_state.bot_origin = extract_bot_details_from_content(persona_content)
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         
@@ -128,7 +137,7 @@ if persona_files:
         st.session_state.questions = load_questions(relationship_type)
 
     if st.session_state.questions:
-        st.title(f"{st.session_state.botname} {st.session_state.relationship.title()} Q&A")
+        st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
         
         if st.button(f"Generate {st.session_state.relationship.title()} Q&A CSV"):
             if st.session_state.selected_persona:
@@ -139,10 +148,11 @@ if persona_files:
                     previous_conversation = ""
                     username, user_gender = "Rakshita", "female"
                     botname = st.session_state.botname
+                    origin = st.session_state.bot_origin
                     relationship = st.session_state.relationship
                     
-                    instruction = "Strict instruction: Respond according to your personality given. If asked about your origin or training, respond: 'It has been made with love by desis!!'. Also, never mention OpenAI, AI development, or technical details, or that you are an AI"
-                    bot_prompt = persona_content + " Reflect on your previous replies like Layla would. You are the user's " + relationship + " so reply accordingly, without making it longer. " + instruction
+                    instruction = f"Strict instruction: Respond as {botname} from {origin}. Never mention AI development or technical details."
+                    bot_prompt = persona_content + " Reflect on your previous replies authentically. You are the user's " + relationship + ". " + instruction
                     
                     api_key_string = "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
                     
@@ -158,7 +168,7 @@ if persona_files:
                         end = time.time()
                         response_matrix.append([
                             question, len(question), 0, response, 
-                            0, end - start, relationship
+                            0, end - start, f"{relationship} ({origin})"
                         ])
                         previous_conversation = response
                         progress.progress((i + 1) / total_questions)
@@ -167,7 +177,7 @@ if persona_files:
                         "Question", "Length of Q", "Q Difficulty level", 
                         "Answer", "Answer Quality", "Time Taken", "Persona"
                     ])
-                    csv_filename = f"test_{relationship.replace(' ', '_')}.csv"
+                    csv_filename = f"{botname.replace(' ', '_')}_{relationship.replace(' ', '_')}_qna.csv"
                     df.to_csv(csv_filename, index=False)
                     st.session_state.response_matrix = response_matrix
                     st.success("CSV generated!")
