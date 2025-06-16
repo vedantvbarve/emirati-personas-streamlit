@@ -18,14 +18,13 @@ from llama_index.llms.google_genai import GoogleGenAI
 from google import genai
 import os
 import glob
+import ast
 
-# Folder configuration
 PERSONAS_FOLDER = "Personas"
 QUESTIONS_FOLDER = "Questions"
 USER_INFO_FILE = "user_info.txt"
 
 def load_user_info():
-    """Extract username and gender from user_info.txt"""
     username = "User"
     user_gender = "unknown"
     try:
@@ -61,31 +60,107 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         for old, new in [("User1", username), ("user1", username), ("[user1]", botname), ("[User1]", botname)]:
             response_raw = response_raw.replace(old, new)
         return response_raw.strip()
-    except json.JSONDecodeError:
-        return f"JSON Decode Error: Unable to parse API response."
-    except KeyError as e:
-        return f"KeyError: {str(e)}. API response structure unexpected."
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-# ... (Keep get_persona_files, extract_relationship_from_filename, extract_bot_details_from_content, 
-# load_persona_content, load_questions functions unchanged from previous versions) ...
+def get_persona_files():
+    persona_files = []
+    patterns = ['*.txt']
+    for pattern in patterns:
+        persona_files.extend(glob.glob(os.path.join(PERSONAS_FOLDER, pattern)))
+    return persona_files
 
-# Initialize session state
+def extract_relationship_from_filename(filename):
+    base_name = os.path.basename(filename).replace('.txt', '')
+    return base_name.replace('_', ' ')
+
+def extract_bot_details_from_content(content):
+    botname = "Assistant"
+    origin = "Unknown origin"
+    lines = content.split('\n')
+    for line in lines:
+        line = line.strip()
+        if line.startswith('- Name: '):
+            name_part = line.replace('- Name: ', '', 1)
+            botname = name_part.split(',')[0].strip()
+        elif line.startswith('Name: '):
+            name_part = line.replace('Name: ', '', 1)
+            botname = name_part.split(',')[0].strip()
+        elif 'Name:' in line:
+            name_part = line.split('Name:')[1].strip()
+            botname = name_part.split(',')[0].strip()
+        if line.startswith('Origin: '):
+            origin = line.replace('Origin: ', '', 1).strip()
+        elif line.startswith('- Origin: '):
+            origin = line.replace('- Origin: ', '', 1).strip()
+        elif 'Origin:' in line:
+            origin = line.split('Origin:')[1].strip()
+        elif line.startswith('From '):
+            origin = line.replace('From ', '', 1).strip()
+    return botname, origin
+
+def load_persona_content(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return content
+    except Exception as e:
+        st.error(f"Error reading persona file: {str(e)}")
+        return ""
+
+def load_questions(relationship_type):
+    question_file = os.path.join(QUESTIONS_FOLDER, f"{relationship_type}_questions.txt")
+    try:
+        with open(question_file, 'r', encoding='utf-8') as f:
+            return [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        st.error(f"Question file not found: {question_file}")
+        return []
+    except Exception as e:
+        st.error(f"Error reading questions: {str(e)}")
+        return []
+
+# Optional: auto-convert array-format question files to plain text
+question_files = ['mentor_questions.txt', 'friend_questions.txt', 'partner_questions.txt']
+for fname in question_files:
+    file_path = f'./Questions/{fname}'
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+        if content.startswith('[') and content.endswith(']'):
+            try:
+                arr = ast.literal_eval(content)
+                if isinstance(arr, list):
+                    with open(file_path, 'w', encoding='utf-8') as f2:
+                        for q in arr:
+                            f2.write(q.strip() + '\n')
+            except Exception:
+                pass
+
+# --- Streamlit session state initialization ---
 if "user_info_loaded" not in st.session_state:
     st.session_state.username, st.session_state.user_gender = load_user_info()
     st.session_state.user_info_loaded = True
 
-required_states = [
-    'response_matrix', 'selected_persona', 'botname', 'bot_origin',
-    'relationship', 'questions', 'csv_filename', 'bulk_running',
-    'paused', 'current_question_index', 'previous_conversation',
-    'user_questions', 'show_resume'
-]
+defaults = {
+    'response_matrix': [],
+    'selected_persona': None,
+    'botname': "Assistant",
+    'bot_origin': "Unknown origin",
+    'relationship': "mentor",
+    'questions': [],
+    'csv_filename': None,
+    'bulk_running': False,
+    'paused': False,
+    'current_question_index': 0,
+    'previous_conversation': "",
+    'user_questions': [],
+    'show_resume': False
+}
+for key, val in defaults.items():
+    if key not in st.session_state:
+        st.session_state[key] = val
 
-for state in required_states:
-    if state not in st.session_state:
-        st.session_state[state] = None if state == 'selected_persona' else False if 'running' in state else []
-
-# UI Elements
 persona_files = get_persona_files()
 
 if persona_files:
@@ -97,102 +172,105 @@ if persona_files:
         relationship = extract_relationship_from_filename(selected_file)
         st.session_state.relationship = relationship
         st.session_state.questions = load_questions(relationship.split()[-1])
+        st.session_state.response_matrix = []
+        st.session_state.csv_filename = None
+        st.session_state.bulk_running = False
+        st.session_state.paused = False
+        st.session_state.current_question_index = 0
+        st.session_state.previous_conversation = ""
+        st.session_state.user_questions = []
+        st.session_state.show_resume = False
 
-if st.session_state.selected_persona and st.session_state.questions:
-    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
-    
-    # Bulk Generation Section
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Start Bulk Generation", disabled=st.session_state.bulk_running):
-            st.session_state.bulk_running = True
-            st.session_state.paused = False
-            st.session_state.current_question_index = 0
-            st.session_state.previous_conversation = []
+    if st.session_state.selected_persona and st.session_state.questions:
+        st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Start Bulk Generation", disabled=st.session_state.bulk_running):
+                st.session_state.bulk_running = True
+                st.session_state.paused = False
+                st.session_state.current_question_index = 0
+                st.session_state.previous_conversation = ""
+                st.session_state.response_matrix = []
 
-    # Single Question Section
-    with col2:
-        user_question = st.text_input("Ask a single question:")
-        if st.button("Ask") and user_question:
-            if st.session_state.bulk_running and not st.session_state.paused:
-                st.session_state.paused = True
-                st.session_state.show_resume = True
-                
-            response = call_gemini_local(
-                user_question, 
-                st.session_state.previous_conversation,
-                st.session_state.user_gender,
-                st.session_state.username,
-                st.session_state.botname,
-                st.session_state.bot_prompt,
-                "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
-            )
-            
-            st.session_state.user_questions.append({
-                "question": user_question,
-                "answer": response,
-                "time": time.time()
-            })
-            st.session_state.previous_conversation += f"\n{user_question}\n{response}"
+        with col2:
+            user_question = st.text_input("Ask a single question:")
+            if st.button("Ask") and user_question:
+                if st.session_state.bulk_running and not st.session_state.paused:
+                    st.session_state.paused = True
+                    st.session_state.show_resume = True
+                response = call_gemini_local(
+                    user_question,
+                    st.session_state.previous_conversation,
+                    st.session_state.user_gender,
+                    st.session_state.username,
+                    st.session_state.botname,
+                    persona_content,
+                    "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+                )
+                st.session_state.user_questions.append({
+                    "question": user_question,
+                    "answer": response,
+                    "time": time.time()
+                })
+                st.session_state.previous_conversation += f"\n{user_question}\n{response}"
 
-    # Bulk Generation Logic
-    if st.session_state.bulk_running and not st.session_state.paused:
-        if st.session_state.current_question_index < len(st.session_state.questions):
-            progress = st.progress(st.session_state.current_question_index / len(st.session_state.questions))
-            question = st.session_state.questions[st.session_state.current_question_index]
-            
-            response = call_gemini_local(
-                question, 
-                st.session_state.previous_conversation,
-                st.session_state.user_gender,
-                st.session_state.username,
-                st.session_state.botname,
-                st.session_state.bot_prompt,
-                "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
-            )
-            
-            st.session_state.response_matrix.append([
-                question, len(question), 0, response, 
-                0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
-            ])
-            st.session_state.previous_conversation += f"\n{question}\n{response}"
-            st.session_state.current_question_index += 1
-            st.rerun()
-        else:
-            st.session_state.bulk_running = False
-            df = pd.DataFrame(st.session_state.response_matrix, columns=[
-                "Question", "Length of Q", "Q Difficulty level", 
-                "Answer", "Answer Quality", "Time Taken", "Persona"
-            ])
-            csv_filename = f"{st.session_state.botname.replace(' ', '_')}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
-            df.to_csv(csv_filename, index=False)
-            st.session_state.csv_filename = csv_filename
-            st.success("Bulk generation completed!")
+        # Bulk Generation Logic
+        if st.session_state.bulk_running and not st.session_state.paused:
+            if st.session_state.current_question_index < len(st.session_state.questions):
+                progress = st.progress(st.session_state.current_question_index / len(st.session_state.questions))
+                question = st.session_state.questions[st.session_state.current_question_index]
+                response = call_gemini_local(
+                    question,
+                    st.session_state.previous_conversation,
+                    st.session_state.user_gender,
+                    st.session_state.username,
+                    st.session_state.botname,
+                    persona_content,
+                    "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+                )
+                st.session_state.response_matrix.append([
+                    question, len(question), 0, response,
+                    0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
+                ])
+                st.session_state.previous_conversation += f"\n{question}\n{response}"
+                st.session_state.current_question_index += 1
+                st.rerun()
+            else:
+                st.session_state.bulk_running = False
+                df = pd.DataFrame(st.session_state.response_matrix, columns=[
+                    "Question", "Length of Q", "Q Difficulty level", 
+                    "Answer", "Answer Quality", "Time Taken", "Persona"
+                ])
+                csv_filename = f"{st.session_state.botname.replace(' ', '_')}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
+                df.to_csv(csv_filename, index=False)
+                st.session_state.csv_filename = csv_filename
+                st.success("Bulk generation completed!")
 
-    # Resume Logic
-    if st.session_state.paused and st.session_state.show_resume:
-        if st.button("Resume Bulk Generation"):
-            st.session_state.paused = False
-            st.session_state.show_resume = False
-            st.rerun()
+        # Resume Logic
+        if st.session_state.paused and st.session_state.show_resume:
+            if st.button("Resume Bulk Generation"):
+                st.session_state.paused = False
+                st.session_state.show_resume = False
+                st.rerun()
 
-    # Download Section
-    if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
-        with open(st.session_state.csv_filename, "rb") as f:
-            st.download_button(
-                label="Download CSV",
-                data=f,
-                file_name=os.path.basename(st.session_state.csv_filename),
-                mime="text/csv"
-            )
+        # Download Section
+        if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
+            with open(st.session_state.csv_filename, "rb") as f:
+                st.download_button(
+                    label="Download CSV",
+                    data=f,
+                    file_name=os.path.basename(st.session_state.csv_filename),
+                    mime="text/csv"
+                )
 
-    # Conversation History
-    st.subheader("Conversation History")
-    if st.session_state.user_questions:
-        for q in st.session_state.user_questions:
-            st.markdown(f"**You**: {q['question']}")  
-            st.markdown(f"**{st.session_state.botname}**: {q['answer']}")
-            st.divider()
+        # Conversation History
+        st.subheader("Conversation History")
+        if st.session_state.user_questions:
+            for q in st.session_state.user_questions:
+                st.markdown(f"**You**: {q['question']}")
+                st.markdown(f"**{st.session_state.botname}**: {q['answer']}")
+                st.divider()
 
 elif not persona_files:
     st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
