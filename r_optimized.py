@@ -156,7 +156,7 @@ def process_user_question():
                 "message": f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.",
                 "time": time.time()
             })
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
+        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         response = call_gemini_local(
             user_question,
@@ -206,7 +206,7 @@ if persona_files:
     if st.session_state.selected_persona and st.session_state.questions:
         st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
         
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
+        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         
         # Bulk Generation Section
