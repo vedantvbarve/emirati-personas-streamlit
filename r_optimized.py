@@ -8,6 +8,8 @@ Original file is located at
 
 # !pip install llama-index-llms-google-
 
+# github
+
 import streamlit as st
 import time
 import pandas as pd
@@ -170,7 +172,7 @@ def process_user_question():
             "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
         )
         end = time.time()
-        
+        response_time = round(end - start, 4)
         st.session_state.user_questions.append({
             "question": user_question,
             "answer": response,
@@ -320,10 +322,15 @@ if persona_files:
                 if event["type"] == "user_qa":
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
+                    # ~~~~ FIX: Only show time if present ~~~~
                     response_time = event.get("response_time", None)
                     if response_time is not None:
-                        st.markdown(f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {event['response_time']:.4f} seconds</div>", unsafe_allow_html=True)
-                    st.markdown("")  # Spacing
+                        st.markdown(
+                            f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {response_time:.4f} seconds</div>",
+                            unsafe_allow_html=True
+                        )
+                    # ~~~~ END FIX ~~~~
+                   st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
                     st.success(":green[Bulk generation begins.]")
@@ -349,4 +356,5 @@ if persona_files:
             st.error("No questions found for selected relationship type!")
 
 else:
-    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")  
+    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
+
