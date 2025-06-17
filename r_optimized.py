@@ -158,6 +158,8 @@ def process_user_question():
             })
         instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
+        
+        start = time.time()
         response = call_gemini_local(
             user_question,
             st.session_state.previous_conversation,
@@ -167,17 +169,22 @@ def process_user_question():
             bot_prompt,
             "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
         )
+        end = time.time()
+        
         st.session_state.user_questions.append({
             "question": user_question,
             "answer": response,
-            "time": time.time()
+            "time": time.time(),
+            "response_time": response_time
         })
+        
         st.session_state.previous_conversation += f"\n{user_question}\n{response}"
         st.session_state.conversation_events.append({
             "type": "user_qa",
             "question": user_question,
             "answer": response,
-            "time": time.time()
+            "time": time.time(),
+            "response_time": response_time
         })
     st.session_state.user_input = ""
 
@@ -313,6 +320,7 @@ if persona_files:
                 if event["type"] == "user_qa":
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
+                    st.markdown(f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {event['response_time']:.4f} seconds</div>", unsafe_allow_html=True)
                     st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
@@ -339,4 +347,4 @@ if persona_files:
             st.error("No questions found for selected relationship type!")
 
 else:
-    st.error(f"No personas files found in {PERSONAS_FOLDER} directory!")  
+    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")  
