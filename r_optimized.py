@@ -161,17 +161,27 @@ def process_user_question():
         instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = st.session_state.persona_content + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         
-        start = time.time()
-        response = call_gemini_local(
-            user_question,
-            st.session_state.previous_conversation,
-            st.session_state.user_gender,
-            st.session_state.username,
-            st.session_state.botname,
-            bot_prompt,
-            "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
-        )
-        end = time.time()
+        # ~~~~ TIMING AND ERROR HANDLING ~~~~
+        response = "Error: No response generated."
+        response_time = None
+        try:
+            start = time.time()
+            response = call_gemini_local(
+                user_question,
+                st.session_state.previous_conversation,
+                st.session_state.user_gender,
+                st.session_state.username,
+                st.session_state.botname,
+                bot_prompt,
+                "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o"
+            )
+            end = time.time()
+            response_time = round(end - start, 4)
+        except Exception as e:
+            response = f"Error: {str(e)}"
+            response_time = None
+        # ~~~~ END TIMING AND ERROR HANDLING ~~~~ 
+         
         response_time = round(end - start, 4)
         st.session_state.user_questions.append({
             "question": user_question,
