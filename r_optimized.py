@@ -10,8 +10,8 @@ Original file is located at
 
 # github
 
-import streamlit as st
 import time
+import streamlit as st
 import pandas as pd
 import os
 import glob
