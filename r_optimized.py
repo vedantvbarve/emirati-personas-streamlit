@@ -320,7 +320,8 @@ if persona_files:
                 if event["type"] == "user_qa":
                     st.markdown(f"**You**: {event['question']}")
                     st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
-                    if "response_time" in event:
+                    response_time = event.get("response_time", None)
+                    if response_time is not None:
                         st.markdown(f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {event['response_time']:.4f} seconds</div>", unsafe_allow_html=True)
                     st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
