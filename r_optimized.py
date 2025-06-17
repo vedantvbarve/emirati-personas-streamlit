@@ -340,7 +340,7 @@ if persona_files:
                             unsafe_allow_html=True
                         )
                     # ~~~~ END FIX ~~~~
-                   st.markdown("")  # Spacing
+                    st.markdown("")  # Spacing
                 elif event["type"] == "bulk_started":
                     st.markdown("---")
                     st.success(":green[Bulk generation begins.]")
