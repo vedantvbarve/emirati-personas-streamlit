@@ -11,6 +11,7 @@ This repository contains a Streamlit application that simulates conversations wi
 - View a complete, chronologically ordered conversation history, including both bulk and individual interactions.
 
 The app is designed for flexibility, supporting both structured (bulk) and free-form (chat) interactions, and maintains full conversational context throughout the session.
+UPDATE: The app now features enhanced personalization and streamlined setup workflows to deliver more tailored interactions.
 
 ---
 
