@@ -58,7 +58,9 @@ repo-root/
   Name: YourName
   Gender: yourgender
   ```
-- **r_optimized.py**: The main Streamlit app file.
+- **r_optimized.py**: The main Streamlit app file. 
+- **requirements.txt**: The libraries needed to run the code. 
+- **to_run.py**: The code required to convert the string array-like text in the `Questions/[relationship]_questions.txt` to 1 question/line.
 
 ### 3. Installation
 
@@ -134,12 +136,4 @@ The app will open in your browser.
 
 This project is provided for educational and research purposes. See `LICENSE` for details.
 
----
-
-## References
-
- See the full development and troubleshooting thread above for detailed explanations of all setbacks and solutions.  
- Streamlit and GitHub documentation on forking and deployment.
-
- https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/53367127/4725895e-704b-4981-9fc4-b0e80761cd8c/r_optimized.py
- programming.github_integration
+--- 
