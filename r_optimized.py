@@ -377,6 +377,7 @@ if not st.session_state.setup_completed:
                 value=st.session_state.username,
                 key="setup_username"
             )
+            st.write("")
         with col2:
             # st.markdown("Your Gender:")
             st.write("")
@@ -386,6 +387,7 @@ if not st.session_state.setup_completed:
                 index=["male", "female", "other", "prefer not to say"].index(st.session_state.user_gender.lower()) if st.session_state.user_gender.lower() in ["male", "female", "other", "prefer not to say"] else 3,
                 key="setup_usergender"
             )
+            st.write("")
         # Update session state with input values
         st.session_state.username = user_name_input
         st.session_state.user_gender = user_gender_input.lower() 
