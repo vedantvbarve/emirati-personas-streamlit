@@ -254,7 +254,7 @@ if persona_files:
                 key="persona_selectbox"
             )
         with col2:
-            if st.button("Change Startup", key="change_setup_btn"):
+            if st.button("🔀 Change Startup", key="change_setup_btn"):
                 st.session_state.setup_completed = False
                 st.rerun()
     # If persona changed, reset setup
