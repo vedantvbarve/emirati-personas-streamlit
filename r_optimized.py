@@ -360,7 +360,8 @@ if not st.session_state.setup_completed:
             st.rerun()
     st.markdown("---")
     st.subheader("📄 To Review: Current Selections")
-    if selected_traits:
+    
+    if st.session_state.selected_traits: 
         st.info(f"**Traits:** {', '.join(selected_traits)}")
     else:
         st.warning("**No traits selected** - all traits will be used by default")
