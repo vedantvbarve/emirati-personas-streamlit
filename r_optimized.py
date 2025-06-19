@@ -10,7 +10,6 @@ import streamlit as st
 import pandas as pd
 import os
 import glob
-import ast
 from llama_index.llms.google_genai import GoogleGenAI
 from google import genai
 
@@ -37,7 +36,6 @@ def load_user_info():
     return username, user_gender
 
 def load_traits():
-    """Load traits from TO_INPUT/traits.txt file"""
     try:
         with open(TRAITS_FILE, 'r', encoding='utf-8') as f:
             traits = [line.strip() for line in f if line.strip()]
@@ -47,7 +45,6 @@ def load_traits():
         return ["Caring", "Wise", "Humorous", "Traditional", "Spiritual", "Practical"]
 
 def load_languages():
-    """Load languages from TO_INPUT/languages.txt file"""
     try:
         with open(LANGUAGES_FILE, 'r', encoding='utf-8') as f:
             languages = [line.strip() for line in f if line.strip()]
@@ -57,34 +54,23 @@ def load_languages():
         return ["English", "Sinhala", "Tamil"]
 
 def filter_persona_by_traits(persona_content, selected_traits):
-    """Filter persona content to only include lines related to selected traits"""
     if not selected_traits:
         return persona_content
-    
     lines = persona_content.split('\n')
     filtered_lines = []
-    
-    # Keep basic info lines (Name, Origin, etc.)
     basic_keywords = ['name:', 'origin:', 'from', 'age:', 'background:', 'location:']
-    
     for line in lines:
         line_lower = line.lower()
-        
-        # Always keep basic info lines
         if any(keyword in line_lower for keyword in basic_keywords):
             filtered_lines.append(line)
             continue
-            
-        # Keep lines that contain any of the selected traits
         if any(trait.lower() in line_lower for trait in selected_traits):
             filtered_lines.append(line)
-    
     return '\n'.join(filtered_lines) if filtered_lines else persona_content
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string, language):
     try:
         language_instruction = f"Respond in {language} language." if language != "English" else ""
-        
         full_prompt = (
             f"{bot_prompt}\n"
             f"{language_instruction}\n"
@@ -165,18 +151,15 @@ def load_questions(relationship_type):
         return []
 
 # ===== SESSION STATE INITIALIZATION =====
-# Initialize user info first
 if "user_info_loaded" not in st.session_state:
     st.session_state.username, st.session_state.user_gender = load_user_info()
     st.session_state.user_info_loaded = True
 
-# Load available options
 if "available_traits" not in st.session_state:
     st.session_state.available_traits = load_traits()
 if "available_languages" not in st.session_state:
     st.session_state.available_languages = load_languages()
 
-# Initialize session state variables
 defaults = {
     'response_matrix': [],
     'selected_persona': None,
@@ -199,7 +182,6 @@ defaults = {
     'persona_selected': False,
     'setup_completed': False
 }
-
 for key, val in defaults.items():
     if key not in st.session_state:
         st.session_state[key] = val
@@ -215,13 +197,9 @@ def process_user_question():
                 "message": f"{st.session_state.current_question_index} questions answered in bulk mode. Generation paused.",
                 "time": time.time()
             })
-        
-        # Filter persona content by selected traits
         filtered_persona = filter_persona_by_traits(st.session_state.persona_content, st.session_state.selected_traits)
-        
         instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = filtered_persona + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
-        
         response = "Error: No response generated."
         response_time = None
         try:
@@ -241,7 +219,6 @@ def process_user_question():
         except Exception as e:
             response = f"Error: {str(e)}"
             response_time = None
-            
         st.session_state.user_questions.append({
             "question": user_question,
             "answer": response,
@@ -258,48 +235,62 @@ def process_user_question():
         })
     st.session_state.user_input = ""
 
-# ==========================================
-# PHASE 1: PERSONA SELECTION
-# ==========================================
-if not st.session_state.persona_selected:
-    st.title("🇱🇰 Sri Lankan Persona Chat")
-    st.markdown("### Select a persona to begin")
-    st.markdown("---")
-    
-    persona_files = get_persona_files()
-    
-    if persona_files:
-        selected_file = st.selectbox("Select a persona:", persona_files, key="persona_select")
-        
-        if st.button("Select Persona", type="primary"):
-            st.session_state.selected_persona = selected_file
-            st.session_state.persona_content = load_persona_content(selected_file)
-            st.session_state.botname, st.session_state.bot_origin = extract_bot_details_from_content(st.session_state.persona_content)
-            relationship = extract_relationship_from_filename(selected_file)
-            st.session_state.relationship = relationship
-            st.session_state.questions = load_questions(relationship.split()[-1])
-            st.session_state.persona_selected = True
-            st.rerun()
-    else:
-        st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
+# PHASE 1: PERSONA SELECTION (ALWAYS SHOW AT TOP)
+persona_files = get_persona_files()
+if persona_files:
+    with st.container():
+        col1, col2 = st.columns([5, 1])
+        with col1:
+            persona_options = persona_files
+            persona_labels = [os.path.basename(f).replace('.txt','') for f in persona_files]
+            current_index = 0
+            if st.session_state.selected_persona in persona_files:
+                current_index = persona_files.index(st.session_state.selected_persona)
+            selected_file = st.selectbox(
+                "Persona",
+                persona_options,
+                format_func=lambda x: os.path.basename(x).replace('.txt',''),
+                index=current_index,
+                key="persona_selectbox"
+            )
+        with col2:
+            if st.button("Change Setup", key="change_setup_btn"):
+                st.session_state.setup_completed = False
+                st.rerun()
+    # If persona changed, reset setup
+    if selected_file != st.session_state.selected_persona:
+        st.session_state.selected_persona = selected_file
+        st.session_state.persona_content = load_persona_content(selected_file)
+        st.session_state.botname, st.session_state.bot_origin = extract_bot_details_from_content(st.session_state.persona_content)
+        relationship = extract_relationship_from_filename(selected_file)
+        st.session_state.relationship = relationship
+        st.session_state.questions = load_questions(relationship.split()[-1])
+        st.session_state.response_matrix = []
+        st.session_state.csv_filename = None
+        st.session_state.bulk_running = False
+        st.session_state.paused = False
+        st.session_state.current_question_index = 0
+        st.session_state.user_questions = []
+        st.session_state.show_resume = False
+        st.session_state.previous_conversation = ""
+        st.session_state.user_input = ""
+        st.session_state.conversation_events = []
+        st.session_state.setup_completed = False
+        st.rerun()
+else:
+    st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
+    st.stop()
 
-# ==========================================
 # PHASE 2: SETUP CONFIGURATION
-# ==========================================
-elif st.session_state.persona_selected and not st.session_state.setup_completed:
+if not st.session_state.setup_completed:
     st.title("🔧 Persona Configuration")
     st.markdown(f"### Configuring: {st.session_state.botname} ({st.session_state.bot_origin})")
     st.markdown("---")
-    
-    # Traits Selection - with current selections pre-selected
     st.subheader("📋 Select Personality Traits")
     st.markdown("**Choose one or more traits you want the AI persona to focus on:**")
-    
     if st.session_state.available_traits:
-        # Use columns for checkboxes with current selections pre-selected
         cols = st.columns(3)
         selected_traits = st.session_state.selected_traits.copy()
-        
         for i, trait in enumerate(st.session_state.available_traits):
             with cols[i % 3]:
                 is_selected = st.checkbox(
@@ -311,8 +302,6 @@ elif st.session_state.persona_selected and not st.session_state.setup_completed:
                     selected_traits.append(trait)
                 elif not is_selected and trait in selected_traits:
                     selected_traits.remove(trait)
-        
-        # Show selection feedback
         if selected_traits:
             st.success(f"✅ {len(selected_traits)} trait(s) selected: {', '.join(selected_traits)}")
         else:
@@ -320,19 +309,13 @@ elif st.session_state.persona_selected and not st.session_state.setup_completed:
     else:
         st.error("❌ No traits found. Please ensure traits.txt exists in TO_INPUT folder.")
         selected_traits = []
-    
     st.markdown("---")
-    
-    # Language Selection - with current selection pre-selected
     st.subheader("🌐 Select Language")
     st.markdown("**Choose the language for conversations:**")
-    
     if st.session_state.available_languages:
-        # Find current index if exists
         current_index = 0
         if st.session_state.selected_language in st.session_state.available_languages:
             current_index = st.session_state.available_languages.index(st.session_state.selected_language)
-            
         selected_language = st.selectbox(
             "Language:",
             options=st.session_state.available_languages,
@@ -343,195 +326,156 @@ elif st.session_state.persona_selected and not st.session_state.setup_completed:
     else:
         st.error("❌ No languages found. Please ensure languages.txt exists in TO_INPUT folder.")
         selected_language = "English"
-    
     st.markdown("---")
-    
-    # Done Button
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         if st.button("✅ Done - Start Chatting!", type="primary", use_container_width=True):
-            # Save selections (use defaults if nothing selected)
             st.session_state.selected_traits = selected_traits if selected_traits else st.session_state.available_traits
             st.session_state.selected_language = selected_language
             st.session_state.setup_completed = True
-            
-            # Show confirmation
             if not selected_traits:
                 st.info("No traits selected - using all traits as default")
-            
             st.success("🎉 Setup completed! Starting chat...")
             time.sleep(1)
             st.rerun()
-    
-    # Show current selections
     st.markdown("---")
     st.subheader("📄 Current Selections")
-    
     if selected_traits:
         st.info(f"**Selected Traits:** {', '.join(selected_traits)}")
     else:
         st.warning("**No traits selected** - all traits will be used by default")
-        
     st.info(f"**Selected Language:** {selected_language}")
+    st.stop()
 
-# ==========================================
 # PHASE 3: MAIN CHAT INTERFACE
-# ==========================================
-elif st.session_state.persona_selected and st.session_state.setup_completed:
-    # Change Setup button
-    col1, col2 = st.columns([4, 1])
+if st.session_state.selected_persona and st.session_state.questions:
+    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&Acheckpersonadropdown")
+    st.markdown("---")
+    st.markdown(f"**Traits chosen:** {', '.join(st.session_state.selected_traits)}")
+    st.markdown(f"**Language:** {st.session_state.selected_language}")
+    st.markdown("---")
+    filtered_persona = filter_persona_by_traits(st.session_state.persona_content, st.session_state.selected_traits)
+    instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
+    bot_prompt = filtered_persona + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Start Bulk Generation", disabled=st.session_state.bulk_running):
+            st.session_state.bulk_running = True
+            st.session_state.paused = False
+            st.session_state.current_question_index = 0
+            st.session_state.response_matrix = []
+            st.session_state.conversation_events.append({
+                "type": "bulk_started",
+                "message": "Bulk generation begins.",
+                "time": time.time()
+            })
     with col2:
-        if st.button("🔄 Change Setup", key="change_setup"):
-            st.session_state.setup_completed = False
-            st.rerun()
-    
-    if st.session_state.selected_persona and st.session_state.questions:
-        st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
-        
-        # Display selected traits and language
-        st.markdown("---")
-        st.markdown(f"**Traits chosen:** {', '.join(st.session_state.selected_traits)}")
-        st.markdown(f"**Language:** {st.session_state.selected_language}")
-        st.markdown("---")
-        
-        # Main chat functionality
-        filtered_persona = filter_persona_by_traits(st.session_state.persona_content, st.session_state.selected_traits)
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
-        bot_prompt = filtered_persona + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
-        
-        # Bulk Generation Section
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Start Bulk Generation", disabled=st.session_state.bulk_running):
-                st.session_state.bulk_running = True
-                st.session_state.paused = False
-                st.session_state.current_question_index = 0
-                st.session_state.response_matrix = []
-                st.session_state.conversation_events.append({
-                    "type": "bulk_started",
-                    "message": "Bulk generation begins.",
-                    "time": time.time()
-                })
-
-        # Single Question Section
-        with col2:
-            st.text_input(
-                "Ask a single question:",
-                value=st.session_state.user_input,
-                key="user_input",
-                on_change=process_user_question
+        st.text_input(
+            "Ask a single question:",
+            value=st.session_state.user_input,
+            key="user_input",
+            on_change=process_user_question
+        )
+    if st.session_state.bulk_running or st.session_state.paused:
+        total_questions = len(st.session_state.questions)
+        progress_percentage = (st.session_state.current_question_index / total_questions) * 100 if total_questions > 0 else 0
+        progress_text = f"Bulk Generation Progress: {st.session_state.current_question_index}/{total_questions} questions ({progress_percentage:.1f}%)"
+        if st.session_state.paused:
+            progress_text += " - PAUSED"
+        st.progress(progress_percentage / 100, text=progress_text)
+    if st.session_state.bulk_running and not st.session_state.paused:
+        if st.session_state.current_question_index < len(st.session_state.questions):
+            question = st.session_state.questions[st.session_state.current_question_index]
+            response = call_gemini_local(
+                question,
+                st.session_state.previous_conversation,
+                st.session_state.user_gender,
+                st.session_state.username,
+                st.session_state.botname,
+                bot_prompt,
+                "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o",
+                st.session_state.selected_language
             )
-
-        # Progress Bar Section
-        if st.session_state.bulk_running or st.session_state.paused:
-            total_questions = len(st.session_state.questions)
-            progress_percentage = (st.session_state.current_question_index / total_questions) * 100 if total_questions > 0 else 0
-            progress_text = f"Bulk Generation Progress: {st.session_state.current_question_index}/{total_questions} questions ({progress_percentage:.1f}%)"
-            if st.session_state.paused:
-                progress_text += " - PAUSED"
-            st.progress(progress_percentage / 100, text=progress_text)
-
-        # Bulk Generation Logic
-        if st.session_state.bulk_running and not st.session_state.paused:
-            if st.session_state.current_question_index < len(st.session_state.questions):
-                question = st.session_state.questions[st.session_state.current_question_index]
-                response = call_gemini_local(
-                    question,
-                    st.session_state.previous_conversation,
-                    st.session_state.user_gender,
-                    st.session_state.username,
-                    st.session_state.botname,
-                    bot_prompt,
-                    "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o",
-                    st.session_state.selected_language
-                )
-                st.session_state.response_matrix.append([
-                    question, len(question), 0, response,
-                    0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
-                ])
-                st.session_state.previous_conversation += f"\n{question}\n{response}"
-                st.session_state.current_question_index += 1
-                st.rerun()
-            else:
-                st.session_state.bulk_running = False
-                st.session_state.conversation_events.append({
-                    "type": "bulk_completed",
-                    "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.",
-                    "time": time.time()
-                })
-                df = pd.DataFrame(st.session_state.response_matrix, columns=[
-                    "Question", "Length of Q", "Q Difficulty level", 
-                    "Answer", "Answer Quality", "Time Taken", "Persona"
-                ])
-                csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
-                df.to_csv(csv_filename, index=False)
-                st.session_state.csv_filename = csv_filename
-                st.markdown(
-                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
-                    unsafe_allow_html=True
-                )
-
-        # Resume Logic
-        if st.session_state.paused and st.session_state.show_resume:
-            if st.button("Resume Bulk Generation"):
-                st.session_state.paused = False
-                st.session_state.show_resume = False
-                st.session_state.conversation_events.append({
-                    "type": "bulk_resumed",
-                    "message": "Bulk generation resumed.",
-                    "time": time.time()
-                })
-                st.rerun()
-
-        # Download Section
-        if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
-            with open(st.session_state.csv_filename, "rb") as f:
-                st.download_button(
-                    label="Download CSV",
-                    data=f,
-                    file_name=os.path.basename(st.session_state.csv_filename),
-                    mime="text/csv",
-                    key="download_csv"
-                )
-
-        # Complete Conversation History
-        st.subheader("Complete Conversation History")
-        if st.session_state.conversation_events:
-            sorted_events = sorted(st.session_state.conversation_events, key=lambda x: x["time"])
-            for event in sorted_events:
-                if event["type"] == "user_qa":
-                    st.markdown(f"**You**: {event['question']}")
-                    st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
-                    response_time = event.get("response_time", None)
-                    if response_time is not None:
-                        st.markdown(
-                            f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {response_time:.4f} seconds</div>",
-                            unsafe_allow_html=True
-                        )
-                    st.markdown("")
-                elif event["type"] == "bulk_started":
-                    st.markdown("---")
-                    st.success(":green[Bulk generation begins.]") 
-                    
-                elif event["type"] == "bulk_paused": 
-                    st.info(event["message"])
-                    st.markdown("---")
-                    
-                elif event["type"] == "bulk_resumed":
-                    st.markdown("---")
-                    st.success(":green[Bulk generation resumed.]")  
-                    
-                elif event["type"] == "bulk_completed": 
+            st.session_state.response_matrix.append([
+                question, len(question), 0, response,
+                0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
+            ])
+            st.session_state.previous_conversation += f"\n{question}\n{response}"
+            st.session_state.current_question_index += 1
+            st.rerun()
+        else:
+            st.session_state.bulk_running = False
+            st.session_state.conversation_events.append({
+                "type": "bulk_completed",
+                "message": f"Bulk generation completed! {len(st.session_state.questions)} questions processed.",
+                "time": time.time()
+            })
+            df = pd.DataFrame(st.session_state.response_matrix, columns=[
+                "Question", "Length of Q", "Q Difficulty level", 
+                "Answer", "Answer Quality", "Time Taken", "Persona"
+            ])
+            csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
+            df.to_csv(csv_filename, index=False)
+            st.session_state.csv_filename = csv_filename
+            st.markdown(
+                '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
+                unsafe_allow_html=True
+            )
+    if st.session_state.paused and st.session_state.show_resume:
+        if st.button("Resume Bulk Generation"):
+            st.session_state.paused = False
+            st.session_state.show_resume = False
+            st.session_state.conversation_events.append({
+                "type": "bulk_resumed",
+                "message": "Bulk generation resumed.",
+                "time": time.time()
+            })
+            st.rerun()
+    if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
+        with open(st.session_state.csv_filename, "rb") as f:
+            st.download_button(
+                label="Download CSV",
+                data=f,
+                file_name=os.path.basename(st.session_state.csv_filename),
+                mime="text/csv",
+                key="download_csv"
+            )
+    st.subheader("Complete Conversation History")
+    if st.session_state.conversation_events:
+        sorted_events = sorted(st.session_state.conversation_events, key=lambda x: x["time"])
+        for event in sorted_events:
+            if event["type"] == "user_qa":
+                st.markdown(f"**You**: {event['question']}")
+                st.markdown(f"**{st.session_state.botname}**: {event['answer']}")
+                response_time = event.get("response_time", None)
+                if response_time is not None:
                     st.markdown(
-                        f'<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">{event["message"]}</div>',
+                        f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {response_time:.4f} seconds</div>",
                         unsafe_allow_html=True
                     )
-                    st.markdown("---")
-        else:
-            st.write("*No conversation history yet. Start by asking a question or beginning bulk generation.*")
-
+                st.markdown("")
+            elif event["type"] == "bulk_started":
+                st.markdown("---")
+                st.success(":green[Bulk generation begins.]")
+                
+            elif event["type"] == "bulk_paused": 
+                st.info(event["message"])
+                st.markdown("---")
+                
+            elif event["type"] == "bulk_resumed":
+                st.markdown("---")
+                st.success(":green[Bulk generation resumed.]")
+                
+            elif event["type"] == "bulk_completed": 
+                st.markdown(
+                    f'<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">{event["message"]}</div>',
+                    unsafe_allow_html=True
+                )
+                st.markdown("---")
     else:
-        if not st.session_state.questions:
-            st.error("No questions found for selected relationship type!")
-        else:
-            st.error(f"Error loading persona: {st.session_state.selected_persona}") 
+        st.write("*No conversation history yet. Start by asking a question or beginning bulk generation.*")
+else:
+    if not st.session_state.questions:
+        st.error("No questions found for selected relationship type!")
+    else:
+        st.error(f"Error loading persona: {st.session_state.selected_persona}") 
