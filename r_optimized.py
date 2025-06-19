@@ -365,4 +365,3 @@ if persona_files:
 
 else:
     st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
-
