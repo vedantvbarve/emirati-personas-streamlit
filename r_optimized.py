@@ -272,9 +272,9 @@ if not st.session_state.setup_completed:
     st.markdown("---")
     
     # Show debug info
-    st.info(f"Setup Status: Not completed")
-    st.info(f"Available Traits: {len(st.session_state.available_traits)} traits loaded")
-    st.info(f"Available Languages: {len(st.session_state.available_languages)} languages loaded")
+    # st.info(f"Setup Status: Not completed")
+    # st.info(f"Available Traits: {len(st.session_state.available_traits)} traits loaded")
+    # st.info(f"Available Languages: {len(st.session_state.available_languages)} languages loaded")
     
     # Traits Selection
     st.subheader("📋 Select Personality Traits")
