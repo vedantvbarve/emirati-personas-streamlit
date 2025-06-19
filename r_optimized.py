@@ -360,6 +360,8 @@ if not st.session_state.setup_completed:
                 key="setup_username"
             )
         with col2:
+            # Add a non-breaking space to align the selectbox label with the text input
+            st.markdown("&nbsp;", unsafe_allow_html=True)
             user_gender_input = st.selectbox(
                 "Your Gender:",
                 options=["Male", "Female", "Other", "Prefer not to say"],
@@ -368,7 +370,7 @@ if not st.session_state.setup_completed:
             )
         # Update session state with input values
         st.session_state.username = user_name_input
-        st.session_state.user_gender = user_gender_input.lower()
+        st.session_state.user_gender = user_gender_input.lower() 
         
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
