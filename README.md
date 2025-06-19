@@ -134,6 +134,4 @@ The app will open in your browser.
 
 ## License
 
-This project is provided for educational and research purposes. See `LICENSE` for details.
-
---- 
+This project is provided for educational and research purposes. See `LICENSE` for details. 
