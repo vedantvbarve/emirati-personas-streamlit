@@ -460,7 +460,7 @@ if persona_files:
                 df.to_csv(csv_filename, index=False)
                 st.session_state.csv_filename = csv_filename
                 st.markdown(
-                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">✅ Bulk generation completed!</div>',
+                    '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
                     unsafe_allow_html=True
                 )
 
