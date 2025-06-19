@@ -408,6 +408,8 @@ if st.session_state.selected_persona and st.session_state.questions:
     if st.session_state.bulk_running and not st.session_state.paused:
         if st.session_state.current_question_index < len(st.session_state.questions):
             question = st.session_state.questions[st.session_state.current_question_index]
+            
+            starttt = time.time()
             response = call_gemini_local(
                 question,
                 st.session_state.previous_conversation,
@@ -418,10 +420,14 @@ if st.session_state.selected_persona and st.session_state.questions:
                 "AIzaSyAWMudIst86dEBwP63BqFcy4mdjr34c87o",
                 st.session_state.selected_language
             )
+            enddd = time.time()
+            
+            resp_t = round(enddd - starttt, 4)
             st.session_state.response_matrix.append([
                 question, len(question), 0, response,
-                0, response_time, f"{st.session_state.relationship} ({st.session_state.bot_origin})"
+                0, resp_t, f"{st.session_state.relationship} ({st.session_state.bot_origin})"
             ])
+            
             st.session_state.previous_conversation += f"\n{question}\n{response}"
             st.session_state.current_question_index += 1
             st.rerun()
