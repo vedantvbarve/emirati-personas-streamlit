@@ -378,9 +378,9 @@ if not st.session_state.setup_completed:
                 key="setup_username"
             )
         with col2:
-            st.markdown("Your Gender:")
+            # st.markdown("Your Gender:")
             user_gender_input = st.selectbox(
-                label="",
+                label="Your Gender:",
                 options=["Male", "Female", "Other", "Prefer not to say"],
                 index=["male", "female", "other", "prefer not to say"].index(st.session_state.user_gender.lower()) if st.session_state.user_gender.lower() in ["male", "female", "other", "prefer not to say"] else 3,
                 key="setup_usergender"
