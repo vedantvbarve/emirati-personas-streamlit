@@ -348,11 +348,11 @@ if not st.session_state.setup_completed:
     else:
         st.error("❌ No languages found. Please ensure languages.txt exists in TO_INPUT folder.")
         selected_language = "English"
-    st.markdown("---")
-
+    st.markdown("---") 
+    
     st.subheader("👤 Personalize Your Experience")
     with st.container():
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([2, 1])  # Name column is wider
         with col1:
             user_name_input = st.text_input(
                 "Your Name:",
