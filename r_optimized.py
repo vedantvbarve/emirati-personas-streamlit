@@ -370,7 +370,7 @@ if not st.session_state.setup_completed:
             )
         # Update session state with input values
         st.session_state.username = user_name_input
-        st.session_state.user_gender = user_gender_input.lower()
+        st.session_state.user_gender = user_gender_input.lower() 
         
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
