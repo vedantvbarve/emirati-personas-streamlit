@@ -254,7 +254,7 @@ if persona_files:
                 key="persona_selectbox"
             )
         with col2:
-            if st.button("Change Setup", key="change_setup_btn"):
+            if st.button("Change Startup", key="change_setup_btn"):
                 st.session_state.setup_completed = False
                 st.rerun()
     # If persona changed, reset setup
@@ -349,7 +349,7 @@ if not st.session_state.setup_completed:
 
 # PHASE 3: MAIN CHAT INTERFACE
 if st.session_state.selected_persona and st.session_state.questions:
-    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&Acheckpersonadropdown")
+    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
     st.markdown("---")
     st.markdown(f"**Traits chosen:** {', '.join(st.session_state.selected_traits)}")
     st.markdown(f"**Language:** {st.session_state.selected_language}")
@@ -418,7 +418,7 @@ if st.session_state.selected_persona and st.session_state.questions:
             df.to_csv(csv_filename, index=False)
             st.session_state.csv_filename = csv_filename
             st.markdown(
-                '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
+                '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">✅ Bulk generation completed!</div>',
                 unsafe_allow_html=True
             )
     if st.session_state.paused and st.session_state.show_resume:
@@ -453,7 +453,7 @@ if st.session_state.selected_persona and st.session_state.questions:
                         f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {response_time:.4f} seconds</div>",
                         unsafe_allow_html=True
                     )
-                st.markdown("")
+                st.markdown("") 
             elif event["type"] == "bulk_started":
                 st.markdown("---")
                 st.success(":green[Bulk generation begins.]")
