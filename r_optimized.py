@@ -343,7 +343,7 @@ if not st.session_state.setup_completed:
             time.sleep(1)
             st.rerun()
     st.markdown("---")
-    st.subheader("📄 Current Selections")
+    st.subheader("📄 To Review: Current Selections")
     if selected_traits:
         st.info(f"**Selected Traits:** {', '.join(selected_traits)}")
     else:
