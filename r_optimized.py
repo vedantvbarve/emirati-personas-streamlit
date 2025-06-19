@@ -364,7 +364,7 @@ if not st.session_state.setup_completed:
         <style>
         /* Nudge the text input up */
         div[data-testid="stTextInput"] > div > input {
-            margin-top: -8px !important;
+            margin-top: -16px !important;
         }
         </style>
         """, unsafe_allow_html=True)
