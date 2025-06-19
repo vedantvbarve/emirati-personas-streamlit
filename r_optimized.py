@@ -388,7 +388,7 @@ if persona_files:
         st.session_state.conversation_events = []
 
     if st.session_state.selected_persona and st.session_state.questions:
-        st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
+        st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&AAAAAA")
         
         # Display selected traits and language as requested
         st.markdown("---")
