@@ -246,13 +246,16 @@ if persona_files:
             current_index = 0
             if st.session_state.selected_persona in persona_files:
                 current_index = persona_files.index(st.session_state.selected_persona)
-            st.markdown('<span style="font-size:2em; font-weight:bold;">Persona</span>', unsafe_allow_html=True)
+                 
+            st.markdown('<span style="font-size:1.5em; font-weight:bold;">🎯 Persona</span>', unsafe_allow_html=True)
+            st.markdown('<style> div[data-testid="stSelectbox"] {margin-top: -1.2em;} </style>', unsafe_allow_html=True)
             selected_file = st.selectbox(
                 "",
                 persona_options,
                 format_func=lambda x: os.path.basename(x).replace('.txt',''),
                 index=current_index,
-                key="persona_selectbox"
+                key="persona_selectbox",
+                label_visibility="collapsed"
             )
         with col2:
             if st.button("🔀 Change Startup", key="change_setup_btn"):
@@ -350,8 +353,7 @@ if not st.session_state.setup_completed:
 
 # PHASE 3: MAIN CHAT INTERFACE
 if st.session_state.selected_persona and st.session_state.questions:
-    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A")
-    st.markdown("---")
+    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A") 
     st.markdown(f"**Traits chosen:** {', '.join(st.session_state.selected_traits)}")
     st.markdown(f"**Language:** {st.session_state.selected_language}")
     st.markdown("---")
