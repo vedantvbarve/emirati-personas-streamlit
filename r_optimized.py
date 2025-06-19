@@ -436,7 +436,7 @@ if st.session_state.selected_persona and st.session_state.questions:
                 "Question", "Length of Q", "Q Difficulty level", 
                 "Answer", "Answer Quality", "Time Taken", "Persona"
             ])
-            csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_qna.csv"
+            csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_persona_test.csv"
             df.to_csv(csv_filename, index=False)
             st.session_state.csv_filename = csv_filename
             st.markdown(
