@@ -6,7 +6,7 @@ Original file is located at
     https://colab.research.google.com/drive/15bLkrgQW-nSRvDS5x_Xl04kduyMlfT8O
 """
 
-# !pip install llama-index-llms-google-  
+# !pip install llama-index-llms-google- 
 
 import time
 import streamlit as st
@@ -167,11 +167,8 @@ def load_questions(relationship_type):
         st.error(f"Error reading questions: {str(e)}")
         return []
 
-# --- FORCE FRESH SESSION STATE INITIALIZATION ---
-# Reset setup_complete to False every time to ensure setup shows
-if "setup_complete" not in st.session_state or st.session_state.get("setup_complete", True):
-    st.session_state.setup_complete = False
-
+# ===== FIXED SESSION STATE INITIALIZATION =====
+# Initialize user info first
 if "user_info_loaded" not in st.session_state:
     st.session_state.username, st.session_state.user_gender = load_user_info()
     st.session_state.user_info_loaded = True
@@ -182,7 +179,11 @@ if "available_traits" not in st.session_state:
 if "available_languages" not in st.session_state:
     st.session_state.available_languages = load_languages()
 
-# Initialize other session state variables with defaults
+# CRITICAL FIX: Ensure setup_complete starts as False
+if "setup_complete" not in st.session_state:
+    st.session_state.setup_complete = False
+
+# Initialize all other session state variables
 defaults = {
     'response_matrix': [],
     'selected_persona': None,
@@ -263,7 +264,14 @@ def process_user_question():
     st.session_state.user_input = ""
 
 # ==========================================
-# SETUP PHASE - MUST APPEAR FIRST
+# DEBUG: Show current setup status
+# ==========================================
+st.sidebar.write(f"DEBUG - Setup Complete: {st.session_state.setup_complete}")
+st.sidebar.write(f"DEBUG - Available Traits: {len(st.session_state.available_traits)}")
+st.sidebar.write(f"DEBUG - Available Languages: {len(st.session_state.available_languages)}")
+
+# ==========================================
+# SETUP PHASE - ALWAYS APPEARS WHEN setup_complete IS FALSE
 # ==========================================
 if not st.session_state.setup_complete:
     st.title("🇱🇰 Sri Lankan Persona Chat Setup")
@@ -282,7 +290,7 @@ if not st.session_state.setup_complete:
         cols = st.columns(3)
         for i, trait in enumerate(st.session_state.available_traits):
             with cols[i % 3]:
-                if st.checkbox(trait, key=f"trait_{i}", value=trait in st.session_state.selected_traits):
+                if st.checkbox(trait, key=f"trait_{i}", value=False):
                     selected_traits.append(trait)
         
         st.session_state.selected_traits = selected_traits
@@ -302,13 +310,14 @@ if not st.session_state.setup_complete:
     st.markdown("**Choose the language for conversations:**")
     
     if st.session_state.available_languages:
-        st.session_state.selected_language = st.selectbox(
+        selected_language = st.selectbox(
             "Language:",
             options=st.session_state.available_languages,
-            index=st.session_state.available_languages.index(st.session_state.selected_language) if st.session_state.selected_language in st.session_state.available_languages else 0,
+            index=0,
             help="Select one language for the conversation"
         )
-        st.success(f"✅ Language selected: {st.session_state.selected_language}")
+        st.session_state.selected_language = selected_language
+        st.success(f"✅ Language selected: {selected_language}")
     else:
         st.error("❌ No languages found. Please ensure languages.txt exists in TO_INPUT folder.")
         st.session_state.selected_language = "English"
@@ -326,20 +335,18 @@ if not st.session_state.setup_complete:
             
             st.session_state.setup_complete = True
             st.success("🎉 Setup completed! Redirecting to chat...")
-            time.sleep(1)
             st.rerun()
     
     # Show current selections
-    if st.session_state.selected_traits or st.session_state.selected_language:
-        st.markdown("---")
-        st.subheader("📄 Current Selection Summary")
+    st.markdown("---")
+    st.subheader("📄 Current Selection Summary")
+    
+    if st.session_state.selected_traits:
+        st.info(f"**Selected Traits:** {', '.join(st.session_state.selected_traits)}")
+    else:
+        st.warning("**No traits selected** - will use all traits by default")
         
-        if st.session_state.selected_traits:
-            st.info(f"**Selected Traits:** {', '.join(st.session_state.selected_traits)}")
-        else:
-            st.warning("**No traits selected** - will use all traits by default")
-            
-        st.info(f"**Selected Language:** {st.session_state.selected_language}")
+    st.info(f"**Selected Language:** {st.session_state.selected_language}")
 
 # ==========================================
 # MAIN APP - Only after setup is complete
@@ -457,7 +464,7 @@ else:
                     df.to_csv(csv_filename, index=False)
                     st.session_state.csv_filename = csv_filename
                     st.markdown(
-                        '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">Bulk generation completed!</div>',
+                        '<div style="background-color: rgba(186, 104, 200, 0.2); border: 1px solid rgba(186, 104, 200, 0.3); border-radius: 0.5rem; padding: 0.75rem; margin: 1rem 0; color: white; font-weight: 500;">✅ Bulk generation completed!</div>',
                         unsafe_allow_html=True
                     )
 
@@ -498,7 +505,7 @@ else:
                                 f"<div style='text-align: right; color: #666; font-size: 0.95em;'>Time taken: {response_time:.4f} seconds</div>",
                                 unsafe_allow_html=True
                             )
-                        st.markdown("") 
+                        st.markdown("")
                     elif event["type"] == "bulk_started":
                         st.markdown("---")
                         st.success(":green[Bulk generation begins.]")
