@@ -371,9 +371,9 @@ if not st.session_state.setup_completed:
         
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("Your Name:")
+            # st.markdown("Your Name:")
             user_name_input = st.text_input(
-                label="",
+                label="Your Name:",
                 value=st.session_state.username,
                 key="setup_username"
             )
