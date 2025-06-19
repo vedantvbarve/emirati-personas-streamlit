@@ -29,8 +29,8 @@ The app is designed for flexibility, supporting both structured (bulk) and free-
 - **Persona Customization:** The app allows you to choose specific personality traits (e.g., "Traditional", "Humorous") to shape responses, as well as select conversation language (English/Sinhala/Tamil/Hindi) for authentic interactions
 - **Refined Interface:** 
   - Streamlined Setup: Intuitive persona → traits → language configuration flow
-  - Responsive layout adjustments
   - Clear setup progression indicators
+  - Responsive layout adjustments
 
 ---
 
