@@ -360,6 +360,14 @@ if not st.session_state.setup_completed:
         }
         </style>
         """, unsafe_allow_html=True) 
+        st.markdown("""
+        <style>
+        /* Nudge the text input up */
+        div[data-testid="stTextInput"] > div > input {
+            margin-top: -8px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         with col1:
