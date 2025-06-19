@@ -379,6 +379,7 @@ if not st.session_state.setup_completed:
             )
         with col2:
             # st.markdown("Your Gender:")
+            st.write("")
             user_gender_input = st.selectbox(
                 label="Your Gender:",
                 options=["Male", "Female", "Other", "Prefer not to say"],
