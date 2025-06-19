@@ -170,7 +170,7 @@ def load_questions(relationship_type):
         st.error(f"Error reading questions: {str(e)}")
         return []
 
-# ===== FIXED SESSION STATE INITIALIZATION =====
+# ===== SESSION STATE INITIALIZATION =====
 # Initialize user info first
 if "user_info_loaded" not in st.session_state:
     st.session_state.username, st.session_state.user_gender = load_user_info()
@@ -182,17 +182,13 @@ if "available_traits" not in st.session_state:
 if "available_languages" not in st.session_state:
     st.session_state.available_languages = load_languages()
 
-# CRITICAL FIX: Use a simple setup_completed flag that starts as False
-if "setup_completed" not in st.session_state:
-    st.session_state.setup_completed = False
+# FORCE SETUP TO APPEAR - Check if setup is needed
+setup_needed = True
+if "traits_language_setup_done" in st.session_state:
+    if st.session_state.traits_language_setup_done:
+        setup_needed = False
 
-# Initialize other session state variables ONLY if they don't exist
-if "selected_traits" not in st.session_state:
-    st.session_state.selected_traits = []
-if "selected_language" not in st.session_state:
-    st.session_state.selected_language = "English"
-
-# Initialize remaining session state variables
+# Initialize session state variables
 defaults = {
     'response_matrix': [],
     'selected_persona': None,
@@ -209,7 +205,10 @@ defaults = {
     'show_resume': False,
     'persona_content': "",
     'user_input': "",
-    'conversation_events': []
+    'conversation_events': [],
+    'selected_traits': [],
+    'selected_language': "English",
+    'traits_language_setup_done': False
 }
 
 for key, val in defaults.items():
@@ -271,33 +270,28 @@ def process_user_question():
     st.session_state.user_input = ""
 
 # ==========================================
-# SETUP PHASE - APPEARS WHEN setup_completed IS FALSE
+# SETUP PHASE - TRAITS AND LANGUAGE SELECTION
 # ==========================================
-if not st.session_state.setup_completed:
-    st.title("🇱🇰 Sri Lankan Persona Chat Setup")
-    st.markdown("### Please configure your preferences before starting")
+if setup_needed:
+    st.title("🇱🇰 Sri Lankan Persona Chat - Initial Setup")
+    st.markdown("### Configure your chat preferences")
     st.markdown("---")
-    
-    # Show debug info
-    st.info(f"Setup Status: Not completed")
-    st.info(f"Available Traits: {len(st.session_state.available_traits)} traits loaded")
-    st.info(f"Available Languages: {len(st.session_state.available_languages)} languages loaded")
     
     # Traits Selection
     st.subheader("📋 Select Personality Traits")
     st.markdown("**Choose one or more traits you want the AI persona to focus on:**")
     
     if st.session_state.available_traits:
-        # Use columns for checkboxes
+        # Create checkboxes in columns
         cols = st.columns(3)
         selected_traits = []
         
         for i, trait in enumerate(st.session_state.available_traits):
             with cols[i % 3]:
-                if st.checkbox(trait, key=f"setup_trait_{i}", value=False):
+                if st.checkbox(trait, key=f"trait_setup_{i}"):
                     selected_traits.append(trait)
         
-        # Show selection feedback
+        # Show feedback
         if selected_traits:
             st.success(f"✅ {len(selected_traits)} trait(s) selected: {', '.join(selected_traits)}")
         else:
@@ -317,7 +311,7 @@ if not st.session_state.setup_completed:
             "Language:",
             options=st.session_state.available_languages,
             index=0,
-            key="setup_language"
+            key="language_setup"
         )
         st.success(f"✅ Language selected: {selected_language}")
     else:
@@ -329,32 +323,32 @@ if not st.session_state.setup_completed:
     # Done Button
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("✅ Done - Start Chatting!", type="primary", use_container_width=True):
-            # Save selections
+        if st.button("✅ Done", type="primary", use_container_width=True):
+            # Save selections (use defaults if nothing selected)
             st.session_state.selected_traits = selected_traits if selected_traits else st.session_state.available_traits
             st.session_state.selected_language = selected_language
-            st.session_state.setup_completed = True  # Mark setup as completed
+            st.session_state.traits_language_setup_done = True
             
             # Show confirmation
             if not selected_traits:
                 st.info("No traits selected - using all traits as default")
             
-            st.success("🎉 Setup completed! Redirecting to chat...")
+            st.success("🎉 Setup completed! Starting chat...")
             time.sleep(1)
             st.rerun()
     
-    # Show current selections summary
+    # Show current selections
     st.markdown("---")
-    st.subheader("📄 Current Selection Summary")
+    st.subheader("📄 Current Selections")
     
     if selected_traits:
         st.info(f"**Selected Traits:** {', '.join(selected_traits)}")
     else:
-        st.warning("**No traits selected** - will use all traits by default")
+        st.warning("**No traits selected** - all traits will be used by default")
         
     st.info(f"**Selected Language:** {selected_language}")
     
-    # Stop execution here - don't show main app
+    # Stop here - don't show main app
     st.stop()
 
 # ==========================================
@@ -362,10 +356,12 @@ if not st.session_state.setup_completed:
 # ==========================================
 
 # Reset setup button
-col1, col2 = st.columns([5, 1])
+col1, col2 = st.columns([4, 1])
 with col2:
-    if st.button("🔄 Reset Setup", key="reset_setup"):
-        st.session_state.setup_completed = False
+    if st.button("🔄 Reset Setup"):
+        st.session_state.traits_language_setup_done = False
+        st.session_state.selected_traits = []
+        st.session_state.selected_language = "English"
         st.rerun()
 
 persona_files = get_persona_files()
