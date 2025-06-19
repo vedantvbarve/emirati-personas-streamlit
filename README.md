@@ -151,6 +151,7 @@ The app will open in your browser.
 - **App crashes with `SyntaxError` or `KeyError`:** Check that all files are in the correct format and all required keys are present in dictionaries.
 - **CSV download button not visible:** Ensure the download button code is outside the generation logic and uses session state.
 - **Bulk/individual Q&A context not maintained:** Do not reset `st.session_state.previous_conversation` except when changing persona.
+- **Missing configuration files:** Verify all files exist in TO_INPUT/
 - **Persona or question files not found:** Verify folder names and file paths match those in the code.
 
 ---
