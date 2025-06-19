@@ -311,7 +311,7 @@ if not st.session_state.setup_completed:
             st.session_state.selected_traits = traits.copy()
         # Flip the toggle state
         st.session_state.traits_toggle = not all_selected
-        st.experimental_rerun()
+        st.rerun()
 
     # --- Traits Checkboxes ---
     cols = st.columns(3)
