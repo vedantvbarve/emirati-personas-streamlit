@@ -21,8 +21,8 @@ from google import genai
 PERSONAS_FOLDER = "Personas"
 QUESTIONS_FOLDER = "Questions"
 USER_INFO_FILE = "TO_INPUT/user_info.txt"
-TRAITS_FILE = "traits.txt"  # Same folder as script
-LANGUAGES_FILE = "languages.txt"  # Same folder as script
+TRAITS_FILE = "TO_INPUT/traits.txt" 
+LANGUAGES_FILE = "TO_INPUT/languages.txt"  
 
 def load_user_info():
     username = "User"
