@@ -53,7 +53,10 @@ repo-root/
 │   └── [persona files].txt
 ├── Questions/
 │   └── [relationship]_questions.txt
-├── user_info.txt
+├── TO_INPUT/             
+│   ├── traits.txt        
+│   ├── languages.txt     
+│   └── user_info.txt   
 ├── r_optimized.py
 └── requirements.txt
 └── to_run.py (one-time use)
@@ -61,11 +64,14 @@ repo-root/
 
 - **Personas/**: Contains persona description files (e.g., `male_mentor.txt`).
 - **Questions/**: Contains question files for each relationship type (e.g., `mentor_questions.txt`), with one question per line (no brackets or quotes).
-- **user_info.txt**: Contains user name and gender, e.g.:
-  ```
-  Name: YourName
-  Gender: yourgender
-  ```
+- **TO_INPUT/**: Configuration files.
+  - `traits.txt`: Customizable traits list. One trait per line.
+  - `languages.txt`: Bot-supported languages.
+  - `user_info.txt`: User name and gender in the format
+    ```
+    Name: YourName
+    Gender: yourgender
+    ```
 - **r_optimized.py**: The main Streamlit app file. 
 - **requirements.txt**: The libraries needed to run the code. 
 - **to_run.py**: The code required to convert the string array-like text in the `Questions/[relationship]_questions.txt` to 1 question/line.
@@ -128,6 +134,15 @@ The app will open in your browser.
 5. **Deploy.**
 
 **Note:** If you fork this repo and deploy your own version, your changes will not affect the original app unless you submit a pull request and it is merged.
+
+---
+
+## Positive Outcomes
+
+- **Deeper Personalization:** Trait combinations create unique interaction styles 
+- **Cultural Authenticity:** Language support enhances regional authenticity 
+- **Efficiency Gains:** Optimized processing reduces latency 
+- **User Empowerment:** Intuitive setup puts users in control of their experience
 
 ---
 
