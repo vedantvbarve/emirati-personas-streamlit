@@ -291,28 +291,44 @@ if not st.session_state.setup_completed:
     st.markdown(f"### Configuring: {st.session_state.botname} ({st.session_state.bot_origin})")
     st.markdown("---")
     st.subheader("📋 Select Personality Traits")
-    st.markdown("**Choose one or more traits you want the AI persona to focus on:**")
-    if st.session_state.available_traits:
-        cols = st.columns(3)
-        selected_traits = st.session_state.selected_traits.copy()
-        for i, trait in enumerate(st.session_state.available_traits):
-            with cols[i % 3]:
-                is_selected = st.checkbox(
-                    trait, 
-                    key=f"setup_trait_{i}",
-                    value=(trait in selected_traits)
-                )
-                if is_selected and trait not in selected_traits:
-                    selected_traits.append(trait)
-                elif not is_selected and trait in selected_traits:
-                    selected_traits.remove(trait)
-        if selected_traits:
-            st.success(f"✅ {len(selected_traits)} trait(s) selected: {', '.join(selected_traits)}")
+    st.markdown("**Choose one or more traits you want the AI persona to focus on:**") 
+
+    # --- Select All / Deselect All Button Logic ---
+    traits = st.session_state.available_traits
+    # Use a session state key to store the toggle state
+    if "traits_toggle" not in st.session_state:
+        st.session_state.traits_toggle = False  # False means "not all selected"
+
+    # Determine if all are selected
+    all_selected = set(st.session_state.selected_traits) == set(traits)
+
+    # Button label and logic
+    toggle_label = "Deselect All" if all_selected else "Select All"
+    if st.button(toggle_label, key="toggle_traits_btn"):
+        if all_selected:
+            st.session_state.selected_traits = []
         else:
-            st.warning("⚠️ No traits selected - all traits will be used by default")
+            st.session_state.selected_traits = traits.copy()
+        # Flip the toggle state
+        st.session_state.traits_toggle = not all_selected
+        st.experimental_rerun()
+
+    # --- Traits Checkboxes ---
+    cols = st.columns(3)
+    updated_traits = []
+    for i, trait in enumerate(traits):
+        with cols[i % 3]:
+            checked = trait in st.session_state.selected_traits
+            new_checked = st.checkbox(trait, key=f"setup_trait_{i}", value=checked)
+            if new_checked:
+                updated_traits.append(trait)
+    st.session_state.selected_traits = updated_traits
+
+    if st.session_state.selected_traits:
+        st.success(f"✅ {len(st.session_state.selected_traits)} trait(s) selected: {', '.join(st.session_state.selected_traits)}")
     else:
-        st.error("❌ No traits found. Please ensure traits.txt exists in TO_INPUT folder.")
-        selected_traits = []
+        st.warning("⚠️ No traits selected - all traits will be used by default") 
+
     st.markdown("---")
     st.subheader("🌐 Select Language")
     st.markdown("**Choose the language for conversations:**")
