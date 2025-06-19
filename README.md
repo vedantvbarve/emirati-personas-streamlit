@@ -12,7 +12,7 @@ This repository contains a Streamlit application that simulates conversations wi
 
 The app is designed for flexibility, supporting both structured (bulk) and free-form (chat) interactions, and maintains full conversational context throughout the session.
 
-**Update:** The app now features enhanced personalization and streamlined setup workflows to deliver more tailored interactions.
+**Update:** The application now features enhanced personalization and streamlined setup workflows to deliver more tailored interactions.
 
 ---
 
@@ -25,7 +25,12 @@ The app is designed for flexibility, supporting both structured (bulk) and free-
 - **Conversation History:** See a full transcript of all individual and bulk interactions, with clear visual separation and status messages for bulk mode events.
 - **User Personalization:** User name and gender are loaded from a `user_info.txt` file at the repo root, ensuring responses are tailored.
 - **Automatic Persona Extraction:** Bot name and origin are extracted from each `[persona files].txt` file in the `Personas` folder, ensuring responses are tailored. The assumption made is: the lines with name and origin begin with `Name: ` and `Origin: ` respectively.
-- **Robust Error Handling:** The app gracefully handles missing files, malformed question files, and API errors, and provides clear user feedback.
+- **Robust Error Handling:** The app gracefully handles missing files, malformed question files, and API errors, and provides clear user feedback. 
+- **Persona Customization:** The app allows you to choose specific personality traits (e.g., "Traditional", "Humorous") to shape responses, as well as select conversation language (English/Sinhala/Tamil/Hindi) for authentic interactions
+- **Refined Interface:** 
+  - Streamlined Setup: Intuitive persona → traits → language configuration flow
+  - Responsive layout adjustments
+  - Clear setup progression indicators
 
 ---
 
