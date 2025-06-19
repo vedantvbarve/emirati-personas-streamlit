@@ -353,7 +353,7 @@ if not st.session_state.setup_completed:
             st.session_state.selected_traits = selected_traits if st.session_state.selected_traits else st.session_state.available_traits
             st.session_state.selected_language = selected_language
             st.session_state.setup_completed = True
-            if not selected_traits:
+            if not st.session_state.selected_traits:
                 st.info("No traits selected - using all traits as default")
             st.success("🎉 Setup completed! Starting chat...")
             time.sleep(1)
