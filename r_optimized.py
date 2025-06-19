@@ -362,7 +362,7 @@ if not st.session_state.setup_completed:
     st.subheader("📄 To Review: Current Selections")
     
     if st.session_state.selected_traits: 
-        st.info(f"**Traits:** {', '.join(selected_traits)}")
+        st.info(f"**Traits:** {', '.join(st.session_state.selected_traits)}")
     else:
         st.warning("**No traits selected** - all traits will be used by default")
     st.info(f"**Language:** {selected_language}")
