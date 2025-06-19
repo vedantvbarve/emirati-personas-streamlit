@@ -22,6 +22,7 @@ The app is designed for flexibility, supporting both structured (bulk) and free-
 - **Downloadable Results:** Download all generated Q&A as a CSV file, with the download button always available after generation.
 - **Conversation History:** See a full transcript of all individual and bulk interactions, with clear visual separation and status messages for bulk mode events.
 - **User Personalization:** User name and gender are loaded from a `user_info.txt` file at the repo root, ensuring responses are tailored.
+- **Automatic Persona Extraction:** Bot name and origin are extracted from each `[persona files].txt` file in the `Personas/` folder, ensuring responses are tailored.
 - **Robust Error Handling:** The app gracefully handles missing files, malformed question files, and API errors, and provides clear user feedback.
 
 ---
