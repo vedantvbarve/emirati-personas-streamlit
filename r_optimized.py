@@ -349,6 +349,27 @@ if not st.session_state.setup_completed:
         st.error("❌ No languages found. Please ensure languages.txt exists in TO_INPUT folder.")
         selected_language = "English"
     st.markdown("---")
+
+    st.subheader("👤 Personalize Your Experience")
+    with st.container():
+        col1, col2 = st.columns(2)
+        with col1:
+            user_name_input = st.text_input(
+                "Your Name:",
+                value=st.session_state.username,
+                key="setup_username"
+            )
+        with col2:
+            user_gender_input = st.selectbox(
+                "Your Gender:",
+                options=["Male", "Female", "Other", "Prefer not to say"],
+                index=["male", "female", "other", "prefer not to say"].index(st.session_state.user_gender.lower()) if st.session_state.user_gender.lower() in ["male", "female", "other", "prefer not to say"] else 3,
+                key="setup_usergender"
+            )
+        # Update session state with input values
+        st.session_state.username = user_name_input
+        st.session_state.user_gender = user_gender_input.lower()
+        
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         if st.button("✅ Done - Start Chatting!", type="primary", use_container_width=True):
