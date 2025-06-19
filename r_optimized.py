@@ -79,6 +79,9 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
             f"{botname}:"
         )
         client = genai.Client(api_key=llm_api_key_string)
+        # Use Streamlit's placeholder for streaming 
+        response_placeholder = st.empty()
+        
         response_text = ""
         for chunk in client.models.generate_content_stream(
             model="gemini-2.0-flash",
@@ -86,11 +89,16 @@ def call_gemini_local(query, previous_conversation, gender, username, botname, b
         ):
             if chunk.text:
                 response_text += chunk.text
+                response_placeholder.markdown(response_text + "▌")  # live update
+        # Clean up trailing cursor 
+        response_placeholder.markdown(response_text)
+        
         response_raw = response_text
         for old, new in [("User1", username), ("user1", username), ("[user1]", botname), ("[User1]", botname)]:
             response_raw = response_raw.replace(old, new)
         return response_raw.strip()
     except Exception as e:
+        st.error(f"Error: {str(e)}")
         return f"Error: {str(e)}"
 
 def get_persona_files():
