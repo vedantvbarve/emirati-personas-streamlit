@@ -260,7 +260,7 @@ if persona_files:
         with col2:
             if st.button("🔀 Change Startup", key="change_setup_btn"):
                 st.session_state.setup_completed = False
-                st.experimental_rerun()
+                st.rerun()
     # If persona changed, reset setup
     if selected_file != st.session_state.selected_persona:
         st.session_state.selected_persona = selected_file
@@ -280,7 +280,7 @@ if persona_files:
         st.session_state.user_input = ""
         st.session_state.conversation_events = []
         st.session_state.setup_completed = False
-        st.experimental_rerun()
+        st.rerun()
 else:
     st.error(f"No persona files found in {PERSONAS_FOLDER} directory!")
     st.stop()
@@ -311,7 +311,7 @@ if not st.session_state.setup_completed:
             st.session_state.selected_traits = traits.copy()
         # Flip the toggle state
         st.session_state.traits_toggle = not all_selected
-        st.experimental_rerun()
+        st.rerun()
 
     # --- Traits Checkboxes ---
     cols = st.columns(3)
@@ -357,7 +357,7 @@ if not st.session_state.setup_completed:
                 st.info("No traits selected - using all traits as default")
             st.success("🎉 Setup completed! Starting chat...")
             time.sleep(1)
-            st.experimental_rerun()
+            st.rerun()
     st.markdown("---")
     st.subheader("📄 To Review: Current Selections")
     if selected_traits:
@@ -421,7 +421,7 @@ if st.session_state.selected_persona and st.session_state.questions:
             ])
             st.session_state.previous_conversation += f"\n{question}\n{response}"
             st.session_state.current_question_index += 1
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.session_state.bulk_running = False
             st.session_state.conversation_events.append({
@@ -449,7 +449,7 @@ if st.session_state.selected_persona and st.session_state.questions:
                 "message": "Bulk generation resumed.",
                 "time": time.time()
             })
-            st.experimental_rerun()
+            st.rerun()
     if st.session_state.csv_filename and os.path.exists(st.session_state.csv_filename):
         with open(st.session_state.csv_filename, "rb") as f:
             st.download_button(
