@@ -352,6 +352,13 @@ if not st.session_state.setup_completed:
      
     st.subheader("👤 Personalize Your Experience")
     with st.container():
+        st.markdown("""<style>
+        /* Nudge selectbox up to align with text input */
+        div[data-baseweb="select"] > div {
+        margin-top: -8px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
             st.markdown("Your Name:")
