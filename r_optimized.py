@@ -420,7 +420,7 @@ if st.session_state.selected_persona and st.session_state.questions:
             )
             st.session_state.response_matrix.append([
                 question, len(question), 0, response,
-                0, time.time(), f"{st.session_state.relationship} ({st.session_state.bot_origin})"
+                0, response_time, f"{st.session_state.relationship} ({st.session_state.bot_origin})"
             ])
             st.session_state.previous_conversation += f"\n{question}\n{response}"
             st.session_state.current_question_index += 1
