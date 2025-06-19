@@ -40,6 +40,7 @@ The app is designed for flexibility, supporting both structured (bulk) and free-
 ```
 repo-root/
 │
+├── README.md
 ├── Personas/
 │   └── [persona files].txt
 ├── Questions/
@@ -47,6 +48,7 @@ repo-root/
 ├── user_info.txt
 ├── r_optimized.py
 └── requirements.txt
+└── to_run.py (one-time use)
 ```
 
 - **Personas/**: Contains persona description files (e.g., `male_mentor.txt`).
