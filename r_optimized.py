@@ -345,10 +345,10 @@ if not st.session_state.setup_completed:
     st.markdown("---")
     st.subheader("📄 To Review: Current Selections")
     if selected_traits:
-        st.info(f"**Selected Traits:** {', '.join(selected_traits)}")
+        st.info(f"**Traits:** {', '.join(selected_traits)}")
     else:
         st.warning("**No traits selected** - all traits will be used by default")
-    st.info(f"**Selected Language:** {selected_language}")
+    st.info(f"**Language:** {selected_language}")
     st.stop()
 
 # PHASE 3: MAIN CHAT INTERFACE
