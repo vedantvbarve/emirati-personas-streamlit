@@ -247,7 +247,7 @@ if persona_files:
             if st.session_state.selected_persona in persona_files:
                 current_index = persona_files.index(st.session_state.selected_persona)
                  
-            st.markdown('<span style="font-size:1.5em; font-weight:bold;">🎯 Persona</span>', unsafe_allow_html=True)
+            st.markdown('<span style="font-size:2em; font-weight:bold;">🎯 Persona</span>', unsafe_allow_html=True)
             st.markdown('<style> div[data-testid="stSelectbox"] {margin-top: -1.2em;} </style>', unsafe_allow_html=True)
             selected_file = st.selectbox(
                 "",
