@@ -350,7 +350,7 @@ if not st.session_state.setup_completed:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         if st.button("✅ Done - Start Chatting!", type="primary", use_container_width=True):
-            st.session_state.selected_traits = selected_traits if selected_traits else st.session_state.available_traits
+            st.session_state.selected_traits = selected_traits if st.session_state.selected_traits else st.session_state.available_traits
             st.session_state.selected_language = selected_language
             st.session_state.setup_completed = True
             if not selected_traits:
