@@ -352,14 +352,14 @@ if not st.session_state.setup_completed:
      
     st.subheader("👤 Personalize Your Experience")
     with st.container():
-        st.markdown("""
-        <style>
-        /* Align selectbox with text input in Streamlit columns */
-        div[data-baseweb="select"] > div {
-            margin-top: -8px !important;
-        }
-        </style>
-        """, unsafe_allow_html=True) 
+        # st.markdown("""
+        # <style>
+        # /* Align selectbox with text input in Streamlit columns */
+        # div[data-baseweb="select"] > div {
+        #     margin-top: -8px !important;
+        # }
+        # </style>
+        # """, unsafe_allow_html=True) 
         st.markdown("""
         <style>
         /* Nudge the text input up */
