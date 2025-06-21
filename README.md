@@ -161,6 +161,13 @@ The app will open in your browser.
 
 ---
 
+## Initial Files
+
+- https://drive.google.com/drive/folders/1PRcLBgJC-oo8AAK_AiXcaC6o-kTxF8lV?usp=drive_link
+- https://docs.google.com/document/d/1XB_2fwlsus_5RaGftEjeSmUdfzqXzqbjjVRg_uN9OXg/edit?usp=sharing
+
+---
+
 ## License
 
 This project is provided for educational and research purposes. See `LICENSE` for details. 
