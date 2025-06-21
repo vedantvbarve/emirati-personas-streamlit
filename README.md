@@ -63,7 +63,7 @@ repo-root/
 │   ├── languages.txt     
 │   └── user_info.txt   
 ├── r_optimized.py
-└── requirements.txt
+├── requirements.txt
 └── to_run.py (one-time use)
 ```
 
