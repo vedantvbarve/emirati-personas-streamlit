@@ -23,10 +23,10 @@ The app is designed for flexibility, supporting both structured (bulk) and free-
 - **Interactive Chat:** Ask individual questions at any time; the app maintains context and integrates these into the ongoing conversation.
 - **Downloadable Results:** Download all generated Q&A as a CSV file, with the download button always available after generation.
 - **Conversation History:** See a full transcript of all individual and bulk interactions, with clear visual separation and status messages for bulk mode events.
-- **User Personalization:** User name and gender are loaded from a `user_info.txt` file at the repo root, ensuring responses are tailored.
+- **User Personalization:** User name and gender are loaded from a `user_info.txt` file at the repo root, ensuring responses are tailored. This will serve as the default name and gender. Concurrently, a feature that has been implemented is the flexibity to enter in a custom name and gender for a more personalized experience.
 - **Automatic Persona Extraction:** Bot name and origin are extracted from each `[persona files].txt` file in the `Personas` folder, ensuring responses are tailored. The assumption made is: the lines with name and origin begin with `Name: ` and `Origin: ` respectively.
 - **Robust Error Handling:** The app gracefully handles missing files, malformed question files, and API errors, and provides clear user feedback. 
-- **Persona Customization:** The app allows you to choose specific personality traits (e.g., "Traditional", "Humorous") to shape responses, as well as select conversation language (English/Sinhala/Tamil/Hindi) for authentic interactions
+- **Persona Customization:** The app allows you to choose specific personality traits (e.g., "Traditional", "Humorous") to shape responses, as well as select conversation language (English/Sinhala/Tamil/Hindi) for authentic interactions. One of the features provided is to allow you to directly select/deselect all trait options.
 - **Refined Interface:** 
   - Streamlined Setup: Intuitive persona → traits → language configuration flow
   - Clear setup progression indicators
