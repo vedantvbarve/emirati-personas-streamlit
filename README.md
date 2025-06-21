@@ -1,7 +1,9 @@
 # Sri Lankan Personas Streamlit App
+
 ---
 **Link:** https://srilankan-personas-culturevo.streamlit.app/
 ---
+
 ## Overview
 
 This repository contains a Streamlit application that simulates conversations with Sri Lankan personas, such as mentors, friends, and family members, using Google Gemini (GenAI) models. The app allows users to:
