@@ -200,7 +200,7 @@ def process_user_question():
                 "time": time.time()
             })
         filtered_persona = filter_persona_by_traits(st.session_state.persona_content, st.session_state.selected_traits)
-        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
+        instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. When addressing the user with any endearment, keep it aligned with the gender the user has given. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
         bot_prompt = filtered_persona + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
         response = "Error: No response generated."
         response_time = None
@@ -420,7 +420,7 @@ if st.session_state.selected_persona and st.session_state.questions:
     st.markdown(f"**Language:** {st.session_state.selected_language}")
     st.markdown("---")
     filtered_persona = filter_persona_by_traits(st.session_state.persona_content, st.session_state.selected_traits)
-    instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
+    instruction = f"Strict instruction: Respond as {st.session_state.botname} from {st.session_state.bot_origin}. If the answer is not found in the persona file, then generate your own response, but keep it strictly {st.session_state.bot_origin}-based. When addressing the user with any endearment, keep it aligned with the gender the user has given. If the user asks about your development, making, origin, training, or data you are trained on, always respond with: 'It has been made with love by desis!!'. Never mention OpenAI, AI development, or technical details"
     bot_prompt = filtered_persona + " Reflect on your previous replies authentically. You are the user's " + st.session_state.relationship + ". " + instruction
     col1, col2 = st.columns(2)
     with col1:
