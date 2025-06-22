@@ -467,6 +467,7 @@ if st.session_state.selected_persona and st.session_state.questions:
             
             resp_t = round(enddd - starttt, 4)
             st.session_state.response_matrix.append([
+                st.session_state.current_question_index + 1,
                 question, len(question), 0, response,
                 0, resp_t, f"{st.session_state.relationship} ({st.session_state.bot_origin})"
             ])
@@ -482,7 +483,7 @@ if st.session_state.selected_persona and st.session_state.questions:
                 "time": time.time()
             })
             df = pd.DataFrame(st.session_state.response_matrix, columns=[
-                "Question", "Length of Q", "Q Difficulty level", 
+                "Q Number", "Question", "Length of Q", "Q Difficulty level", 
                 "Answer", "Answer Quality", "Time Taken", "Persona"
             ])
             csv_filename = f"{st.session_state.botname.replace(' ', '_').lower()}_{st.session_state.relationship.replace(' ', '_')}_persona_test.csv"
