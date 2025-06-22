@@ -70,7 +70,7 @@ def filter_persona_by_traits(persona_content, selected_traits):
 
 def call_gemini_local(query, previous_conversation, gender, username, botname, bot_prompt, llm_api_key_string, language):
     try:
-        language_instruction = f"Respond in {language} language in 1 or 2 lines only, no exceptions." if language != "English" else "English" 
+        language_instruction = f"Respond in {language} language in 1 or 2 lines only, no exceptions." 
         full_prompt = (
             f"{bot_prompt}\n"
             f"{language_instruction}\n"
