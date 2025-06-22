@@ -415,7 +415,7 @@ if not st.session_state.setup_completed:
 
 # PHASE 3: MAIN CHAT INTERFACE
 if st.session_state.selected_persona and st.session_state.questions:
-    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&Anow") 
+    st.title(f"{st.session_state.botname} ({st.session_state.bot_origin}) {st.session_state.relationship.title()} Q&A") 
     st.markdown(f"**Traits chosen:** {', '.join(st.session_state.selected_traits)}")
     st.markdown(f"**Language:** {st.session_state.selected_language}")
     st.markdown("---")
