@@ -121,7 +121,9 @@ The app will open in your browser.
 
 ## Workflow:
 
-![image](https://github.com/user-attachments/assets/1cf21722-bc5c-4269-ac76-7e58693759a8)
+https://github.com/user-attachments/assets/1cf21722-bc5c-4269-ac76-7e58693759a8
+
+<img src="[image.png](https://github.com/user-attachments/assets/1cf21722-bc5c-4269-ac76-7e58693759a8)" width="36.12" height="54.19">
 
 ---
 
