@@ -1,4 +1,3 @@
 English
-Tamil
-Hindi
-Sinhala
+Arabic
+Extremely broken Hindi
