@@ -7,7 +7,7 @@
 
 ## Overview
 
-This repository contains a Streamlit application that simulates conversations with Sri Lankan personas, such as mentors, friends, and family members, using Google Gemini (GenAI) models. The app allows users to:
+This repository contains a Streamlit application that simulates conversations with Emirati personas, such as mentors, friends, and family members, using Google Gemini (GenAI) models. The app allows users to:
 
 - Select a persona from a set of text files.
 - Generate bulk Q&A CSVs based on predefined question sets.
