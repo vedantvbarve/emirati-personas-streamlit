@@ -1,7 +1,7 @@
 # Sri Lankan Personas Streamlit App
 
 ---
-**Link:** [https://srilankan-personas-culturevo.streamlit.app/](http://emirati-personas-app.streamlit.app/)
+**Link:** [http://emirati-personas-app.streamlit.app/](http://emirati-personas-app.streamlit.app/)
 
 ---
 
