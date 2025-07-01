@@ -1,4 +1,4 @@
-# Sri Lankan Personas Streamlit App
+# Emirati Personas Streamlit App
 
 ---
 **Link:** [http://emirati-personas-app.streamlit.app/](http://emirati-personas-app.streamlit.app/)
