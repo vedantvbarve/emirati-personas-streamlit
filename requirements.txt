@@ -5,4 +5,4 @@ pandas
 fastapi
 uvicorn
 python-dotenv
-bbv-mweu-cno
+streamlit
