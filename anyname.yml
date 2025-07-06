@@ -1,0 +1,157 @@
+name: Deploy FastAPI and Streamlit Apps
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: cvoapi
+  REGION: me-central1
+  FASTAPI_SERVICE: emirati-personas-api
+  STREAMLIT_SERVICE: emirati-personas-streamlit
+
+jobs:
+  deploy-fastapi:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker to use gcloud as credential helper
+      run: gcloud auth configure-docker
+
+    - name: Build FastAPI Docker image
+      run: |
+        docker build -f Dockerfile.fastapi -t gcr.io/${{ env.PROJECT_ID }}/${{ env.FASTAPI_SERVICE }}:${{ github.sha }} .
+
+    - name: Push FastAPI Docker image
+      run: |
+        docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.FASTAPI_SERVICE }}:${{ github.sha }}
+
+    - name: Deploy FastAPI to Cloud Run
+      run: |
+        gcloud run deploy ${{ env.FASTAPI_SERVICE }} \
+          --image gcr.io/${{ env.PROJECT_ID }}/${{ env.FASTAPI_SERVICE }}:${{ github.sha }} \
+          --platform managed \
+          --region ${{ env.REGION }} \
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 2Gi \
+          --cpu 1 \
+          --timeout 300 \
+          --max-instances 10 \
+          --set-env-vars GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+
+    - name: Get FastAPI service URL
+      id: get-fastapi-url
+      run: |
+        URL=$(gcloud run services describe ${{ env.FASTAPI_SERVICE }} --region=${{ env.REGION }} --format='value(status.url)')
+        echo "FASTAPI_URL=$URL" >> $GITHUB_OUTPUT
+        echo "FastAPI deployed to: $URL"
+
+    outputs:
+      fastapi_url: ${{ steps.get-fastapi-url.outputs.FASTAPI_URL }}
+
+  deploy-streamlit:
+    runs-on: ubuntu-latest
+    needs: deploy-fastapi
+    
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Update Streamlit config with FastAPI URL
+      run: |
+        sed -i 's|FASTAPI_URL = ".*"|FASTAPI_URL = "${{ needs.deploy-fastapi.outputs.fastapi_url }}"|' r_optimized.py
+
+    - name: Create Streamlit Dockerfile
+      run: |
+        cat > Dockerfile.streamlit << 'EOF'
+        FROM python:3.10-slim
+        
+        WORKDIR /app
+        COPY . /app
+        
+        RUN pip install --upgrade pip
+        RUN pip install -r requirements.txt
+        
+        EXPOSE 8501
+        CMD ["streamlit", "run", "r_optimized.py", "--server.port=8501", "--server.address=0.0.0.0"]
+        EOF
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker to use gcloud as credential helper
+      run: gcloud auth configure-docker
+
+    - name: Build Streamlit Docker image
+      run: |
+        docker build -f Dockerfile.streamlit -t gcr.io/${{ env.PROJECT_ID }}/${{ env.STREAMLIT_SERVICE }}:${{ github.sha }} .
+
+    - name: Push Streamlit Docker image
+      run: |
+        docker push gcr.io/${{ env.PROJECT_ID }}/${{ env.STREAMLIT_SERVICE }}:${{ github.sha }}
+
+    - name: Deploy Streamlit to Cloud Run
+      run: |
+        gcloud run deploy ${{ env.STREAMLIT_SERVICE }} \
+          --image gcr.io/${{ env.PROJECT_ID }}/${{ env.STREAMLIT_SERVICE }}:${{ github.sha }} \
+          --platform managed \
+          --region ${{ env.REGION }} \
+          --allow-unauthenticated \
+          --port 8501 \
+          --memory 2Gi \
+          --cpu 1 \
+          --timeout 300 \
+          --max-instances 5 \
+          --set-env-vars FASTAPI_URL=${{ needs.deploy-fastapi.outputs.fastapi_url }}
+
+    - name: Get Streamlit service URL
+      id: get-streamlit-url
+      run: |
+        URL=$(gcloud run services describe ${{ env.STREAMLIT_SERVICE }} --region=${{ env.REGION }} --format='value(status.url)')
+        echo "STREAMLIT_URL=$URL" >> $GITHUB_OUTPUT
+        echo "Streamlit deployed to: $URL"
+
+    outputs:
+      streamlit_url: ${{ steps.get-streamlit-url.outputs.STREAMLIT_URL }}
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [deploy-fastapi, deploy-streamlit]
+    
+    steps:
+    - name: Deployment Summary
+      run: |
+        echo "🚀 Deployment Complete!"
+        echo "=================================="
+        echo "FastAPI Backend: ${{ needs.deploy-fastapi.outputs.fastapi_url }}"
+        echo "Streamlit Frontend: ${{ needs.deploy-streamlit.outputs.streamlit_url }}"
+        echo "=================================="
+        echo "✅ Both services are now live!"
