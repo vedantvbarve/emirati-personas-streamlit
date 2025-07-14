@@ -44,10 +44,10 @@ def load_languages():
     try:
         with open(LANGUAGES_FILE, 'r', encoding='utf-8') as f:
             languages = [line.strip() for line in f if line.strip()]
-            return languages if languages else ["English", "Mandarin"]
+            return languages if languages else ["English", "Arabic"]
     except Exception as e:
         st.error(f"Error reading languages file: {str(e)}")
-        return ["English", "Mandarin"]
+        return ["English", "Arabic"]
 
 def get_persona_files():
     persona_files = []
@@ -62,7 +62,7 @@ def extract_relationship_from_filename(filename):
 
 def extract_bot_details_from_content(content):
     botname = "Assistant"
-    origin = "Unknown origin"
+    origin = "United Arab Emirates"
     lines = content.split('\n')
     for line in lines:
         line = line.strip()
